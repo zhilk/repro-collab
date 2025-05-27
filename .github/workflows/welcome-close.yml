@@ -47,14 +47,14 @@ jobs:
           )
       
           # Create issue and capture number
-          ISSUE_JSON=$(gh issue create \
+          # Create issue and capture output
+          ISSUE_URL=$(gh issue create \
             --repo "$FORK_REPO" \
             --title "📦 Gather some data" \
-            --body "$BODY" \
-            --json number,url)
-      
-          ISSUE_NUMBER=$(echo "$ISSUE_JSON" | jq -r '.number')
-          ISSUE_URL=$(echo "$ISSUE_JSON" | jq -r '.url')
+            --body "$BODY")
+
+          # Extract issue number from the URL
+          ISSUE_NUMBER=$(basename "$ISSUE_URL")
       
           echo "Created issue #$ISSUE_NUMBER: $ISSUE_URL"
           
