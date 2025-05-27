@@ -14,8 +14,17 @@ jobs:
           REPO: ${{ github.repository }}
           FORK_FULL_NAME: ${{ github.event.forkee.full_name }}
         run: |
+          BODY=$(cat <<EOF
+          Hi @$FORKER!
+
+          Fork full name: \`${FORK_FULL_NAME}\`
+
+          Leave a comment when you're ready. If your comment has no question mark, this issue will close and we'll continue in your fork.
+          EOF
+          )
+
           gh issue create \
             --repo "$REPO" \
             --title "🎉 @$FORKER just forked the repo!" \
-            --body "Hi @$FORKER!\n\nFork full name: \`${FORK_FULL_NAME}\`\n\nLeave a comment when you're ready. If your comment has no question mark, this issue will close and we'll continue in your fork."
+            --body "$BODY" \
             --label "newfork"
