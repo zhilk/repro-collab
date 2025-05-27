@@ -73,6 +73,6 @@ jobs:
         run: |
           echo "Closing issue #${{ github.event.issue.number }}"
           gh issue close "${{ github.event.issue.number }}" \
-            --comment "Continue here: ${{ steps.followup.outputs.new_issue_url }}"
+            --comment "Continue here: ${{ steps.followup.outputs.new_issue_url }}" \
             --repo "${{ github.repository }}"
 
