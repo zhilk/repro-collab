@@ -1,28 +1,42 @@
-- name: Extract comment and fork info
-  id: vars
-  shell: bash
-  run: |
-    set -euo pipefail
+name: Close Newfork Welcome & Follow Up
 
-    COMMENT="${{ github.event.comment.body }}"
-    ISSUE_NUMBER="${{ github.event.issue.number }}"
-    COMMENTER="${{ github.actor }}"
-    ISSUE_BODY="${{ github.event.issue.body }}"
+on:
+  issue_comment:
+    types: [created]
 
-    echo "== Raw issue body =="
-    echo "$ISSUE_BODY"
-    echo "===================="
+jobs:
+  close-and-followup:
+    runs-on: ubuntu-latest
 
-    # Regex match for: Fork full name: `owner/repo`
-    if [[ "$ISSUE_BODY" =~ Fork[[:space:]]full[[:space:]]name:\ \`([a-zA-Z0-9._-]+/[a-zA-Z0-9._-]+)\` ]]; then
-      FORK_REPO="${BASH_REMATCH[1]}"
-      echo "✅ Found fork: $FORK_REPO"
-      echo "fork_repo=$FORK_REPO" >> "$GITHUB_OUTPUT"
-    else
-      echo "❌ Could not extract fork repo from issue body."
-      exit 1
-    fi
+    # Only act on issues labeled "newfork"
+    if: contains(github.event.issue.labels.*.name, 'newfork')
 
-    echo "comment=$COMMENT" >> "$GITHUB_OUTPUT"
-    echo "issue_number=$ISSUE_NUMBER" >> "$GITHUB_OUTPUT"
-    echo "commenter=$COMMENTER" >> "$GITHUB_OUTPUT"
+    steps:
+      - name: Extract comment and fork info
+        id: vars
+        shell: bash
+        run: |
+          set -euo pipefail
+      
+          COMMENT="${{ github.event.comment.body }}"
+          ISSUE_NUMBER="${{ github.event.issue.number }}"
+          COMMENTER="${{ github.actor }}"
+          ISSUE_BODY="${{ github.event.issue.body }}"
+      
+          echo "== Raw issue body =="
+          echo "$ISSUE_BODY"
+          echo "===================="
+      
+          # Regex match for: Fork full name: `owner/repo`
+          if [[ "$ISSUE_BODY" =~ Fork[[:space:]]full[[:space:]]name:\ \`([a-zA-Z0-9._-]+/[a-zA-Z0-9._-]+)\` ]]; then
+            FORK_REPO="${BASH_REMATCH[1]}"
+            echo "✅ Found fork: $FORK_REPO"
+            echo "fork_repo=$FORK_REPO" >> "$GITHUB_OUTPUT"
+          else
+            echo "❌ Could not extract fork repo from issue body."
+            exit 1
+          fi
+      
+          echo "comment=$COMMENT" >> "$GITHUB_OUTPUT"
+          echo "issue_number=$ISSUE_NUMBER" >> "$GITHUB_OUTPUT"
+          echo "commenter=$COMMENTER" >> "$GITHUB_OUTPUT"
