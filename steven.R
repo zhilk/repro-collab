@@ -143,7 +143,7 @@ server <- function(input, output, session) {
   
   # Exit: save and stop
   observeEvent(input$exit, {
-    if(!dir.exists("data"))dir.create(data)
+    if(!dir.exists("data"))dir.create("data")
     write.csv(results(), paste0("data/", session_id, '.csv'), row.names = FALSE)
     stopApp()
   })
