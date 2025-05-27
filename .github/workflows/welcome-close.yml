@@ -29,10 +29,10 @@ jobs:
             exit 1
           fi
 
-          echo "comment=$COMMENT" >> $GITHUB_OUTPUT
-          echo "issue_number=$ISSUE_NUMBER" >> $GITHUB_OUTPUT
-          echo "commenter=$COMMENTER" >> $GITHUB_OUTPUT
-          echo "fork_repo=$FORK_REPO" >> $GITHUB_OUTPUT
+          echo "comment=$COMMENT" >> "$GITHUB_OUTPUT"
+          echo "issue_number=$ISSUE_NUMBER" >> "$GITHUB_OUTPUT"
+          echo "commenter=$COMMENTER" >> "$GITHUB_OUTPUT"
+          echo "fork_repo=$FORK_REPO" >> "$GITHUB_OUTPUT"
 
       - name: Close issue if comment has no question mark
         if: "!contains(steps.vars.outputs.comment, '?')"
