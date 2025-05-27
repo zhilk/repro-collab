@@ -13,7 +13,7 @@ jobs:
 
     steps:
       - name: Extract FORK_FULL_NAME from comment
-        id: extract
+        id: vars
         env:
           ISSUE_BODY: ${{ github.event.issue.body }}
         run: |
@@ -35,10 +35,9 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "Closing issue #${{ steps.vars.outputs.issue_number }}"
-          gh issue close "${{ steps.vars.outputs.issue_number }}" \
+          echo "Closing issue #${{ github.event.issue.number }}"
+          gh issue close "${{ github.event.issue.number }}" \
             --repo "${{ github.repository }}" \
-            --comment "✅ Closing this issue — looks like @$COMMENTER is all set!"
 
       - name: Create follow-up issue in the fork
         if: "!contains(steps.vars.outputs.comment, '?')"
