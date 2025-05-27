@@ -13,12 +13,12 @@ jobs:
 
     steps:
       - name: Respond fast if question mark.
-        if: "contains(github.event.issue.comment, '?')"
+        if: contains(github.event.comment.body, '?')
         env:
           GH_TOKEN: ${{ secrets.GH_PAT_CROSSREPO }}
         run: |
           gh issue comment "${{ github.event.issue.number }}" \
-            --body "Oh... let's figure this out together. Grab one of us!" \
+            --body "Oh... I detected a '?', let's figure this out together. Grab one of us!" \
             --repo "${{ github.repository }}"
 
       - name: Extract FORK_FULL_NAME from comment
@@ -42,7 +42,7 @@ jobs:
           
       - name: Create follow-up issue in the fork
         id: followup
-        if: "!contains(steps.vars.outputs.comment, '?')"
+        if: !contains(github.event.comment.body, '?')
         env:
           GH_TOKEN: ${{ secrets.GH_PAT_CROSSREPO }}
           FORK_REPO: ${{ steps.vars.outputs.fork_repo }}
@@ -76,7 +76,7 @@ jobs:
 
 
       - name: Close issue if comment has no question mark
-        if: "!contains(steps.vars.outputs.comment, '?')"
+        if: !contains(github.event.comment.body, '?')
         env:
           GH_TOKEN: ${{ secrets.GH_PAT_CROSSREPO }}
         run: |
