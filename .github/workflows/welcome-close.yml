@@ -20,14 +20,7 @@ jobs:
           gh issue comment "${{ github.event.issue.number }}" \
             --body "Oh... let's figure this out together. Grab me!" \
             --repo "${{ github.repository }}"
-      - name: Respond fast if no question mark.
-        if: "!contains(steps.vars.outputs.comment, '?')"
-        env:
-          GH_TOKEN: ${{ secrets.GH_PAT_CROSSREPO }}
-        run: |
-          gh issue comment "${{ github.event.issue.number }}" \
-            --body "Cool! Wait a sec." \
-            --repo "${{ github.repository }}"
+
       - name: Extract FORK_FULL_NAME from comment
         id: vars
         env:
