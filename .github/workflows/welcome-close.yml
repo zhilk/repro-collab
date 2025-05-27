@@ -19,8 +19,12 @@ jobs:
           echo "Comment was:"
           echo "$COMMENT_BODY"
           FORK_REPO="$(echo "$COMMENT_BODY" | grep -oP 'Fork full name: `\K[^`]+')"
-          echo "fork_repo=\"${FORK_REPO}\"" >> "$GITHUB_OUTPUT"
 
+          echo "Extracted FORK_REPO: $FORK_REPO"
+
+          echo "fork_repo<<EOF" >> "$GITHUB_OUTPUT"
+          echo "$FORK_REPO" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
       - name: Close issue if comment has no question mark
         if: "!contains(steps.vars.outputs.comment, '?')"
         env:
