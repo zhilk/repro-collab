@@ -1,0 +1,23 @@
+name: Welcome Forker
+
+on:
+  fork:
+
+jobs:
+  create-issue-in-fork:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Create issue in forked repo
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT_CROSSREPO }}
+          FORK_FULL_NAME: ${{ github.event.forkee.full_name }}
+          FORKER: ${{ github.actor }}
+        run: |
+          gh auth status
+
+          gh issue create \
+            --repo "$FORK_FULL_NAME" \
+            --title "👋 Welcome to your new fork!" \
+            --body "Hi @$FORKER! Thanks for forking. Let us know if you need any help getting started 🚀" \
+            --label "welcome"
