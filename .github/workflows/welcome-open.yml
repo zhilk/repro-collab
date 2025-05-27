@@ -18,7 +18,12 @@ jobs:
           Hi @$FORKER!
 
           Fork full name: \`${FORK_FULL_NAME}\`
-
+          
+          You now need to setup posit.cloud. Follow these steps:
+          
+          1. Login
+          2. Whatever tbd
+          
           Leave a comment when you're ready. If your comment has no question mark, this issue will close and we'll continue in your fork.
           EOF
           )
