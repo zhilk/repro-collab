@@ -14,8 +14,8 @@ jobs:
     steps:
       - name: Extract FORK_FULL_NAME from comment
         id: extract
-          env:
-            ISSUE_BODY: ${{ github.event.issue.body }}
+        env:
+          ISSUE_BODY: ${{ github.event.issue.body }}
         run: |
           COMMENT_BODY="$(cat <<EOF
           $ISSUE_BODY
