@@ -33,11 +33,11 @@ jobs:
       - name: Close issue if comment has no question mark
         if: "!contains(steps.vars.outputs.comment, '?')"
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_PAT_CROSSREPO }}
         run: |
           echo "Closing issue #${{ github.event.issue.number }}"
           gh issue close "${{ github.event.issue.number }}" \
-            --repo "${{ github.repository }}" \
+            --repo "${{ github.repository }}"
 
       - name: Create follow-up issue in the fork
         if: "!contains(steps.vars.outputs.comment, '?')"
