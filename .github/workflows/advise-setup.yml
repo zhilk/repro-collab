@@ -1,23 +1,20 @@
-name: Welcome Forker
+name: Fork Triggered Welcome Issue
 
 on:
   fork:
 
 jobs:
-  create-issue-in-fork:
+  welcome:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Create issue in forked repo
+      - name: Create issue in origin repo for forker
         env:
           GH_TOKEN: ${{ secrets.GH_PAT_CROSSREPO }}
-          FORK_FULL_NAME: ${{ github.event.forkee.full_name }}
           FORKER: ${{ github.actor }}
+          REPO: ${{ github.repository }}
         run: |
-          gh auth status
-
           gh issue create \
-            --repo "$FORK_FULL_NAME" \
-            --title "👋 Welcome to your new fork!" \
-            --body "Hi @$FORKER! Thanks for forking. Let us know if you need any help getting started 🚀" \
-            --label "welcome"
+            --repo "$REPO" \
+            --title "🎉 @$FORKER just forked the repo!" \
+            --body "Hi @$FORKER, thanks for forking! Feel free to open issues if you have questions, and check out our onboarding guide in `POST_FORK.md`." \
+            --label "fork"
