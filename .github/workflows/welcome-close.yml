@@ -12,11 +12,6 @@ jobs:
     if: contains(github.event.issue.labels.*.name, 'newfork')
 
     steps:
-      - name: Extract comment and fork info
-        id: vars
-        shell: bash
-
-    steps:
       - name: Extract FORK_FULL_NAME from comment
         id: extract
         run: |
