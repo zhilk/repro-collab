@@ -15,35 +15,17 @@ jobs:
       - name: Extract comment and fork info
         id: vars
         shell: bash
+
+    steps:
+      - name: Extract FORK_FULL_NAME from comment
+        id: extract
         run: |
-          set -euo pipefail
- 
-          COMMENT="${{ github.event.comment.body }}"
-          ISSUE_NUMBER="${{ github.event.issue.number }}"
-          COMMENTER="${{ github.actor }}"
-          ISSUE_BODY="${{ github.event.issue.body }}"
- 
-          echo "== Raw issue body =="
-          echo "$ISSUE_BODY"
-          echo "===================="
- 
-          # Tight regex: look for exactly the line we injected:
-          #    Fork full name: `owner/repo`
-          if [[ "$ISSUE_BODY" =~ Fork[[:space:]]full[[:space:]]name:\ \`([A-Za-z0-9._-]+/[A-Za-z0-9._-]+)\` ]]; then
-            FORK_REPO="${BASH_REMATCH[1]}"
-            echo "✅ Found fork repo: $FORK_REPO"
-          else
-            echo "❌ Could not extract fork repo from issue body."
-            exit 1
-          fi
- 
-          # Now dump everything into GITHUB_OUTPUT in one go:
-          {
-            echo "comment=${COMMENT}"
-            echo "issue_number=${ISSUE_NUMBER}"
-            echo "commenter=${COMMENTER}"
-            echo "fork_repo=${FORK_REPO}"
-          } >> "$GITHUB_OUTPUT"
+          COMMENT_BODY="${{ github.event.comment.body }}"
+          echo "Comment was:"
+          echo "$COMMENT_BODY"
+          FORK_REPO=$(echo "$COMMENT_BODY" | grep -oP 'Fork full name: `\K[^`]+')
+          echo "fork_repo=$FORK_REPO" >> $GITHUB_OUTPUT
+
       - name: Close issue if comment has no question mark
         if: "!contains(steps.vars.outputs.comment, '?')"
         env:
@@ -59,10 +41,8 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GH_PAT_CROSSREPO }}
           FORK_REPO: ${{ steps.vars.outputs.fork_repo }}
-          COMMENTER: ${{ steps.vars.outputs.commenter }}
         run: |
           gh issue create \
             --repo "$FORK_REPO" \
             --title "📦 Next Steps for Your Fork" \
-            --body "Hi @$COMMENTER!\n\nYou're all set! Here are the next steps for the workshop:\n\n1. Do this\n2. Check that\n3. Celebrate 🎉\n\nLet us know if you need help!" \
-            --label "next-steps"
+            --body "Hi\n\nYou're all set! Here are the next steps for the workshop:\n\n1. Do this\n2. Check that\n3. Celebrate 🎉\n\nLet us know if you need help!"
