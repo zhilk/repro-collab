@@ -12,9 +12,10 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_PAT_CROSSREPO }}
           FORKER: ${{ github.actor }}
           REPO: ${{ github.repository }}
+          FORK_FULL_NAME: ${{ github.event.forkee.full_name }}
         run: |
           gh issue create \
             --repo "$REPO" \
             --title "🎉 @$FORKER just forked the repo!" \
-            --body "Hi @$FORKER, thanks for forking! Feel free to open issues if you have questions, and check out our onboarding guide in `POST_FORK.md`." \
+            --body "Hi @$FORKER!\n\nFork full name: \`${FORK_FULL_NAME}\`\n\nLeave a comment when you're ready. If your comment has no question mark, this issue will close and we'll continue in your fork."
             --label "newfork"

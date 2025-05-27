@@ -1,4 +1,4 @@
-name: Auto-Close and Follow-Up
+name: Close Newfork Welcome & Follow Up
 
 on:
   issue_comment:
@@ -8,38 +8,51 @@ jobs:
   close-and-followup:
     runs-on: ubuntu-latest
 
+    # Only act on issues labeled "newfork"
     if: contains(github.event.issue.labels.*.name, 'newfork')
 
     steps:
-      - name: Extract comment and metadata
+      - name: Extract comment and fork info
         id: vars
         run: |
-          echo "comment=${{ github.event.comment.body }}" >> $GITHUB_OUTPUT
-          echo "issue_number=${{ github.event.issue.number }}" >> $GITHUB_OUTPUT
-          echo "commenter=${{ github.actor }}" >> $GITHUB_OUTPUT
+          COMMENT="${{ github.event.comment.body }}"
+          ISSUE_NUMBER="${{ github.event.issue.number }}"
+          COMMENTER="${{ github.actor }}"
+          ISSUE_BODY="${{ github.event.issue.body }}"
 
-      - name: Close issue and create follow-up if comment has no question mark
+          # Tight regex: Fork full name: `owner/repo`
+          if [[ "$ISSUE_BODY" =~ Fork\ full\ name:\ \`([a-zA-Z0-9._-]+/[a-zA-Z0-9._-]+)\` ]]; then
+            FORK_REPO="${BASH_REMATCH[1]}"
+            echo "Found fork: $FORK_REPO"
+          else
+            echo "❌ Could not extract fork repo from issue body."
+            exit 1
+          fi
+
+          echo "comment=$COMMENT" >> $GITHUB_OUTPUT
+          echo "issue_number=$ISSUE_NUMBER" >> $GITHUB_OUTPUT
+          echo "commenter=$COMMENTER" >> $GITHUB_OUTPUT
+          echo "fork_repo=$FORK_REPO" >> $GITHUB_OUTPUT
+
+      - name: Close issue if comment has no question mark
+        if: "!contains(steps.vars.outputs.comment, '?')"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Closing issue #${{ steps.vars.outputs.issue_number }}"
+          gh issue close "${{ steps.vars.outputs.issue_number }}" \
+            --repo "${{ github.repository }}" \
+            --comment "✅ Closing this issue — looks like @$COMMENTER is all set!"
+
+      - name: Create follow-up issue in the fork
+        if: "!contains(steps.vars.outputs.comment, '?')"
         env:
           GH_TOKEN: ${{ secrets.GH_PAT_CROSSREPO }}
-          COMMENT: ${{ steps.vars.outputs.comment }}
-          ISSUE_NUMBER: ${{ steps.vars.outputs.issue_number }}
+          FORK_REPO: ${{ steps.vars.outputs.fork_repo }}
           COMMENTER: ${{ steps.vars.outputs.commenter }}
         run: |
-          if [[ "$COMMENT" != *"?"* ]]; then
-            echo "Closing issue in origin repo."
-            gh issue close "$ISSUE_NUMBER" \
-              --repo "${{ github.repository }}" \
-              --comment "✅ Closing this issue — looks like @$COMMENTER is all set! Follow-up steps coming to your fork 🚀"
-
-            # Create issue in the user's fork
-            FORK_REPO="${COMMENTER}/$(basename ${GITHUB_REPOSITORY})"
-
-            echo "Creating follow-up issue in $FORK_REPO"
-            gh issue create \
-              --repo "$FORK_REPO" \
-              --title "🧩 Next Setup Steps" \
-              --body "Hi @$COMMENTER! Now that your fork is set up, here are the next steps:\n\n1. Configure X\n2. Enable Y\n3. Connect with Z\n\nLet us know if you have any questions!" \
-              --label "next-steps"
-          else
-            echo "Question mark detected — leaving issue open."
-          fi
+          gh issue create \
+            --repo "$FORK_REPO" \
+            --title "📦 Next Steps for Your Fork" \
+            --body "Hi @$COMMENTER!\n\nYou're all set! Here are the next steps for the workshop:\n\n1. Do this\n2. Check that\n3. Celebrate 🎉\n\nLet us know if you need help!" \
+            --label "next-steps"
