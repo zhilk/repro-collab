@@ -13,12 +13,12 @@ jobs:
 
     steps:
       - name: Respond fast if question mark.
-        if: "contains(steps.vars.outputs.comment, '?')"
+        if: "contains(github.event.issue.comment, '?')"
         env:
           GH_TOKEN: ${{ secrets.GH_PAT_CROSSREPO }}
         run: |
           gh issue comment "${{ github.event.issue.number }}" \
-            --body "Oh... let's figure this out together. Grab me!" \
+            --body "Oh... let's figure this out together. Grab one of us!" \
             --repo "${{ github.repository }}"
 
       - name: Extract FORK_FULL_NAME from comment
