@@ -17,4 +17,4 @@ jobs:
             --repo "$REPO" \
             --title "🎉 @$FORKER just forked the repo!" \
             --body "Hi @$FORKER, thanks for forking! Feel free to open issues if you have questions, and check out our onboarding guide in `POST_FORK.md`." \
-            --label "fork"
+            --label "newfork"
