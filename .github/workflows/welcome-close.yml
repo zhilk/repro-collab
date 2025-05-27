@@ -1,0 +1,45 @@
+name: Auto-Close and Follow-Up
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  close-and-followup:
+    runs-on: ubuntu-latest
+
+    if: contains(github.event.issue.labels.*.name, 'newfork')
+
+    steps:
+      - name: Extract comment and metadata
+        id: vars
+        run: |
+          echo "comment=${{ github.event.comment.body }}" >> $GITHUB_OUTPUT
+          echo "issue_number=${{ github.event.issue.number }}" >> $GITHUB_OUTPUT
+          echo "commenter=${{ github.actor }}" >> $GITHUB_OUTPUT
+
+      - name: Close issue and create follow-up if comment has no question mark
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT_CROSSREPO }}
+          COMMENT: ${{ steps.vars.outputs.comment }}
+          ISSUE_NUMBER: ${{ steps.vars.outputs.issue_number }}
+          COMMENTER: ${{ steps.vars.outputs.commenter }}
+        run: |
+          if [[ "$COMMENT" != *"?"* ]]; then
+            echo "Closing issue in origin repo."
+            gh issue close "$ISSUE_NUMBER" \
+              --repo "${{ github.repository }}" \
+              --comment "✅ Closing this issue — looks like @$COMMENTER is all set! Follow-up steps coming to your fork 🚀"
+
+            # Create issue in the user's fork
+            FORK_REPO="${COMMENTER}/$(basename ${GITHUB_REPOSITORY})"
+
+            echo "Creating follow-up issue in $FORK_REPO"
+            gh issue create \
+              --repo "$FORK_REPO" \
+              --title "🧩 Next Setup Steps" \
+              --body "Hi @$COMMENTER! Now that your fork is set up, here are the next steps:\n\n1. Configure X\n2. Enable Y\n3. Connect with Z\n\nLet us know if you have any questions!" \
+              --label "next-steps"
+          else
+            echo "Question mark detected — leaving issue open."
+          fi
