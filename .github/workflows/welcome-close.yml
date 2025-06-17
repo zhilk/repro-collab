@@ -7,9 +7,8 @@ on:
 jobs:
   close-and-followup:
     runs-on: ubuntu-latest
-
-    # Only act on issues labeled "newfork"
     if: contains(github.event.issue.labels.*.name, 'newfork')
+    steps:
       - name: Extract FORK_FULL_NAME from comment
         id: vars
         env:
@@ -28,10 +27,10 @@ jobs:
           echo "fork_repo<<EOF" >> "$GITHUB_OUTPUT"
           echo "$FORK_REPO" >> "$GITHUB_OUTPUT"
           echo "EOF" >> "$GITHUB_OUTPUT"
-          
+
       - name: Create follow-up issue in the fork
         id: followup
-        if: !contains(github.event.comment.body, '?')
+        if: "!contains(github.event.comment.body, '?')"
         env:
           GH_TOKEN: ${{ secrets.GH_PAT_CROSSREPO }}
           FORK_REPO: ${{ steps.vars.outputs.fork_repo }}
@@ -39,33 +38,29 @@ jobs:
           BODY=$(cat <<EOF
           Hi there,
           cool that you got the setup in posit cloud done.
-      
+
           Now you need to gather some data, so run ... tbd.
           EOF
           )
-      
-          # Create issue and capture number
-          # Create issue and capture output
+
           ISSUE_URL=$(gh issue create \
             --repo "$FORK_REPO" \
             --title "📦 Gather some data" \
             --body "$BODY")
 
-          # Extract issue number from the URL
           ISSUE_NUMBER=$(basename "$ISSUE_URL")
-      
+
           echo "Created issue #$ISSUE_NUMBER: $ISSUE_URL"
-          
+
           gh issue comment "$ISSUE_NUMBER" \
             --repo "$FORK_REPO" \
             --body "When you are done, commit the data with \`closes #$ISSUE_NUMBER\`"
-          
+
           echo "new_issue_number=$ISSUE_NUMBER" >> "$GITHUB_OUTPUT"
           echo "new_issue_url=$ISSUE_URL" >> "$GITHUB_OUTPUT"
 
-
       - name: Close issue if comment has no question mark
-        if: !contains(github.event.comment.body, '?')
+        if: "!contains(github.event.comment.body, '?')"
         env:
           GH_TOKEN: ${{ secrets.GH_PAT_CROSSREPO }}
         run: |
@@ -73,4 +68,3 @@ jobs:
           gh issue close "${{ github.event.issue.number }}" \
             --comment "Continue here: ${{ steps.followup.outputs.new_issue_url }}" \
             --repo "${{ github.repository }}"
-
