@@ -1,0 +1,34 @@
+--- 
+title: "Reproducible Research"
+subtitle: "How to do the same thing more than once"
+author: "Aaron Peikert & Hannes Diemerling"
+date: "`r Sys.Date()`"
+site: bookdown::bookdown_site
+documentclass: book
+url: https://aaronpeikert.github.io/repro-collab/self-paced
+# cover-image: path to the social sharing image like images/cover.jpg
+description: |
+  This is a self-paced workshop on how to collaborate.
+link-citations: yes
+github-repo: aaronpeikert/repro-collab
+---
+
+```{r setup, include=FALSE}
+links<-yaml::read_yaml("links.yml")
+source("functions.R")
+```
+
+# About {-}
+
+We ([Aaron Peikert](mailto:peikert@mpib-berlin.mpg.de) and [Hannes Diemerling](mailto:diemerling@mpib-berlin.mpg.de)) work at the Formal Methods project at the Max Planck Institute for Human Development.
+Do no hesitate to contact us via email if you have any questions!
+If you found typos, have problems, or have suggestions for improvement [please open an issue](https://github.com/aaronpeikert/repro-workshop/issues/new).
+
+
+If you found your way to this page because you are currently participating in a workshop, thank you for attending!
+You can head to the [next chapter "Getting Started"](./getting-started.html)
+
+If you are here on your own, you are welcome to try the workshop; however, we can not guarantee that the instructions on this website will work at random time points between workshops.
+In case you like what you see and you want to offer this workshop at your institution, [get in touch with us](mailto:peikert@mpib-berlin.mpg.de).
+
+You may use all materials from the [GitHub repo](https://www.github.com/aaronpeikert/repro-collab) under the [CC0 1.0 Universal licence](https://creativecommons.org/publicdomain/zero/1.0/) unless noted otherwise; still, we expect that you credit us where appropriate (e.g., with citing this as the source).

@@ -1,0 +1,33 @@
+general:
+  feedback: "https://No-feedback-site.yet"
+reprodudes:
+  one: "https://chatgpt.com/share/67d7f136-400c-800e-8104-aa822b5405fb"
+  two: "https://chatgpt.com/share/67d7f081-67e4-800e-9410-07beec2b0093"
+  three: "https://chatgpt.com/share/67d7f0ee-a090-800e-a97e-f2c487a13a0b"
+  four: "https://chatgpt.com/share/67d7f11c-4cb0-800e-9464-4eb708851473"
+  five: "https://chatgpt.com/share/67d7f1a1-bad8-800e-a941-a788c01347ee"
+addinfos:
+  start: "https://en.wikipedia.org/wiki/Information"
+  rmarkdown: "https://rmarkdown.rstudio.com/"
+  git: "https://education.github.com/git-cheat-sheet-education.pdf"
+  repro: "https://github.com/aaronpeikert/repro-tutorial"
+  docker: "https://docs.docker.com/"
+  make: "https://www.gnu.org/software/make/manual/make.html"
+  PAT: "https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens"
+logsign:
+  githubsign: "https://github.com/signup"
+  githublog: "https://github.com/login"
+  positsign: "https://login.posit.cloud/register"
+  positlog: "https://login.posit.cloud/register"
+  chatgptsign: "https://chat.openai.com/auth/login"
+  chatgptlog: "https://chat.openai.com/auth/login"
+suggestions:
+  rmarkdown: "https://bookdown.org/yihui/rmarkdown/"
+  git: "https://git-scm.com/docs/gittutorial"
+  github: "https://docs.github.com/en/get-started/quickstart/hello-world"
+  make: "https://kbroman.org/minimal_make/"
+  docker: "https://docs.docker.com/get-docker/"
+  latex: "https://de.overleaf.com/learn/latex/Learn_LaTeX_in_30_minutes"
+projekt:
+  start: "https://posit.cloud/content/10490110"
+shareddoc: "https://pad.gwdg.de/s/Yl6_LbMEV"
