@@ -1,9 +1,9 @@
 Version: 1.0
 ProjectId: 7dda86a9-68c1-419e-bd81-442f6e7378b5
 
-RestoreWorkspace: Default
-SaveWorkspace: Default
-AlwaysSaveHistory: Default
+RestoreWorkspace: No
+SaveWorkspace: No
+AlwaysSaveHistory: No
 
 EnableCodeIndexing: Yes
 UseSpacesForTab: Yes
@@ -14,3 +14,5 @@ RnwWeave: knitr
 LaTeX: XeLaTeX
 
 AutoAppendNewline: Yes
+
+BuildType: Makefile
