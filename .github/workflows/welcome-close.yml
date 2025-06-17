@@ -10,17 +10,6 @@ jobs:
 
     # Only act on issues labeled "newfork"
     if: contains(github.event.issue.labels.*.name, 'newfork')
-
-    steps:
-      - name: Respond fast if question mark.
-        if: contains(github.event.comment.body, '?')
-        env:
-          GH_TOKEN: ${{ secrets.GH_PAT_CROSSREPO }}
-        run: |
-          gh issue comment "${{ github.event.issue.number }}" \
-            --body "Oh... I detected a '?', let's figure this out together. Grab one of us!" \
-            --repo "${{ github.repository }}"
-
       - name: Extract FORK_FULL_NAME from comment
         id: vars
         env:
