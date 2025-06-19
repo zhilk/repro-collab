@@ -9,7 +9,6 @@ jobs:
     steps:
       - name: Create issue in origin repo for forker
         env:
-          GH_TOKEN: ${{ secrets.GH_PAT_CROSSREPO }}
           FORKER: ${{ github.actor }}
           REPO: ${{ github.repository }}
           FORK_FULL_NAME: ${{ github.event.forkee.full_name }}
