@@ -64,6 +64,8 @@ jobs:
           Once you have completed the introduction, I will close this issue for you. If you have any questions, feel free to ask!
           
           Thank you!
+          EOF
+          )
 
           gh issue create \
             --repo "$FORK_REPO" \
