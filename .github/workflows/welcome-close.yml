@@ -36,6 +36,10 @@ jobs:
           FORK_REPO: ${{ steps.vars.outputs.fork_repo }}
           FORKER: ${{ github.actor }}
         run: |
+
+          gh label create "newfork" --repo "$FORK_REPO" --description "new Fork" --color "#000000" || true
+          gh label create "PreregistrationInstruction" --repo "$FORK_REPO" --description "Add Description" --color "#b9ed4f" || true
+        
           BODY=$(cat <<EOF
           Hi @$FORKER!
 
