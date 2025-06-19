@@ -45,9 +45,9 @@ jobs:
           Thank you for working with me on our preregistration!
           
           **Next step:**  
-          Please create a new issue in your repository with the title `Introduction needed` and assign the label `PreregistrationInstruction` to it.
+          Please create a new issue in your repository with the title `Introduction needed`.
           
-          Why is this important?
+          **Why is this important?:** 
           We are working together on the preregistration, and the introduction section is still missing. 
           By creating this issue and assigning the label, we can clearly track and assign this task as part of our collaboration. 
           This helps us make sure the introduction will be written and not forgotten.
@@ -56,13 +56,11 @@ jobs:
           
           1. Go to your repository: `${FORK_REPO}` → “Issues” tab.
           2. Click “New issue”.
-          3. For the title, use a fully self-explanatory description, like in this issue.
+          3. For the title, use a fully self-explanatory description, here `Introduction needed`.
           4. In the issue body, describe the problem clearly and concisely, what do we want to do?
-          5. Assign the label: `PreregistrationInstruction` before submitting.
-          _Tip: Click “Labels” on the right and select `PreregistrationInstruction`._
           6. Click “Submit new issue”.
           
-          Once you have completed the introduction, I will close this issue for you. If you have any questions, feel free to ask!
+          Once you have created the issue, I will close this issue for you. If you have any questions, feel free to ask!
           
           Thank you!
           EOF
@@ -70,7 +68,7 @@ jobs:
 
           gh issue create \
             --repo "$FORK_REPO" \
-            --title "Create an issue in your repo for the missing introduction section in the preregistration and assign the label PreregistrationInstruction" \
+            --title "Create an issue in your repo for the missing introduction section with title `Introduction needed`." \
             --body "$BODY" \  
 
       - name: Close issue if comment has no question mark
