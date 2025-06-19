@@ -147,6 +147,12 @@ server <- function(input, output, session) {
     write.csv(results(), paste0("data/", session_id, '.csv'), row.names = FALSE)
     stopApp()
   })
+  
+  session$onSessionEnded(function() {
+    df <- isolate(results())
+    if(!dir.exists("data")) dir.create("data")
+    write.csv(df, paste0("data/", session_id, '.csv'), row.names = FALSE)
+  })
 }
 
 # Run ---------------------------------------------------------------------
