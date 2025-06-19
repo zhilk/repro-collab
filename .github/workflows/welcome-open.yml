@@ -16,20 +16,29 @@ jobs:
         run: |
           BODY=$(cat <<EOF
           Hi @$FORKER!
-
+          
           Fork repo: \`${FORK_REPO}\`
           
-          You now need to setup posit.cloud. Follow these steps:
+          Thank you for forking the repository!
           
-          1. Login
-          2. Whatever tbd
+          **Next step:** Please enable "Issues" in your forked repository so we can collaborate and track your progress or questions.
           
-          Leave a comment when you're ready. If your comment has no question mark, this issue will close and we'll continue in your fork.
+          To enable issues in your fork:
+          
+          1. Go to your repository: [https://github.com/$FORK_REPO](https://github.com/$FORK_REPO)
+          2. Click on **"Settings"**.
+          3. Scroll down to the **"Features"** section.
+          4. Check the box labeled **"Issues"**.
+          5. You're done! You can now create and track issues in your fork.
+          
+          Once you have enabled issues, please leave a comment here to let us know. If you have any questions, feel free to ask!
+          
+          Thank you!
           EOF
           )
 
           gh issue create \
             --repo "$UPSTREAM_REPO" \
-            --title "🎉 @$FORKER just forked the repo!" \
+            --title "@FORKER Please Enable Issues in Your Forked Repository!" \
             --body "$BODY" \
             --label "newfork"
