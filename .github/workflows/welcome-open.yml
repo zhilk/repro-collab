@@ -39,6 +39,6 @@ jobs:
 
           gh issue create \
             --repo "$UPSTREAM_REPO" \
-            --title "@FORKER Please Enable Issues in Your Forked Repository!" \
+            --title "@$FORKER Please Enable Issues in Your Forked Repository!" \
             --body "$BODY" \
             --label "newfork"
