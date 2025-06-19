@@ -25,11 +25,10 @@ jobs:
           
           To enable issues in your fork:
           
-          1. Go to your repository: [https://github.com/$FORK_REPO](https://github.com/$FORK_REPO)
-          2. Click on **"Settings"**.
-          3. Scroll down to the **"Features"** section.
-          4. Check the box labeled **"Issues"**.
-          5. You're done! You can now create and track issues in your fork.
+          1. Go to your **"Settings"** in Your repository: [https://github.com/$FORK_REPO/settings](https://github.com/$FORK_REPO/settings)
+          2. Scroll down to the **"Features"** section.
+          3. Check the box labeled **"Issues"**.
+          4. You're done! You can now create and track issues in your fork.
           
           Once you have enabled issues, please leave a comment here to let us know. If you have any questions, feel free to ask!
           
