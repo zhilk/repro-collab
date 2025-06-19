@@ -1,5 +1,7 @@
 on:
   push:
+    paths:
+        - self-paced-source/**
     branches: main
   registry_package:
     types: [published, updated]
