@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     if: contains(github.event.issue.labels.*.name, 'newfork')
     steps:
-      - name: Extract FORK_FULL_NAME from comment
+      - name: Extract FORK from comment
         id: vars
         env:
           ISSUE_BODY: ${{ github.event.issue.body }}
@@ -20,7 +20,7 @@ jobs:
           )"
           echo "Comment was:"
           echo "$COMMENT_BODY"
-          FORK_REPO="$(echo "$COMMENT_BODY" | grep -oP 'Fork full name: `\K[^`]+')"
+          FORK_REPO="$(echo "$COMMENT_BODY" | grep -oP 'Fork repo: `\K[^`]+')"
 
           echo "Extracted FORK_REPO: $FORK_REPO"
 

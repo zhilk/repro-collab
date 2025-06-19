@@ -11,13 +11,13 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GH_PAT_CROSSREPO }}
           FORKER: ${{ github.actor }}
-          REPO: ${{ github.repository }}
-          FORK_FULL_NAME: ${{ github.event.forkee.full_name }}
+          UPSTREAM_REPO: ${{ github.repository }}
+          FORK_REPO: ${{ github.event.forkee.full_name }}
         run: |
           BODY=$(cat <<EOF
           Hi @$FORKER!
 
-          Fork full name: \`${FORK_FULL_NAME}\`
+          Fork repo: \`${FORK_REPO}\`
           
           You now need to setup posit.cloud. Follow these steps:
           
@@ -29,7 +29,7 @@ jobs:
           )
 
           gh issue create \
-            --repo "$REPO" \
+            --repo "$UPSTREAM_REPO" \
             --title "🎉 @$FORKER just forked the repo!" \
             --body "$BODY" \
             --label "newfork"
