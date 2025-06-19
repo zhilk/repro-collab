@@ -34,30 +34,42 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GH_PAT_CROSSREPO }}
           FORK_REPO: ${{ steps.vars.outputs.fork_repo }}
+          FORKER: ${{ github.actor }}
         run: |
           BODY=$(cat <<EOF
-          Hi there,
-          cool that you got the setup in posit cloud done.
+          Hi @$FORKER!
 
-          Now you need to gather some data, so run ... tbd.
-          EOF
-          )
+          Fork repo: `${FORK_REPO}`
+          
+          Thank you for working with me on our preregistration!
+          
+          **Next step:**  
+          Please create a new issue in your repository with the title `Introduction needed` and assign the label `PreregistrationInstruction` to it.
+          
+          Why is this important?
+          We are working together on the preregistration, and the introduction section is still missing. 
+          By creating this issue and assigning the label, we can clearly track and assign this task as part of our collaboration. 
+          This helps us make sure the introduction will be written and not forgotten.
+                    
+          **What to do:**
+          
+          1. Go to your repository: `${FORK_REPO}` → “Issues” tab.
+          2. Click “New issue”.
+          3. For the title, use a fully self-explanatory description, like in this issue.
+          4. In the issue body, describe the problem clearly and concisely, what do we want to do?
+          5. Assign the label: `PreregistrationInstruction` before submitting.
+          _Tip: Click “Labels” on the right and select `PreregistrationInstruction`._
+          6. Click “Submit new issue”.
+          
+          Once you have completed the introduction, I will close this issue for you. If you have any questions, feel free to ask!
+          
+          Thank you!
 
-          ISSUE_URL=$(gh issue create \
+          gh issue create \
             --repo "$FORK_REPO" \
-            --title "📦 Gather some data" \
-            --body "$BODY")
-
-          ISSUE_NUMBER=$(basename "$ISSUE_URL")
-
-          echo "Created issue #$ISSUE_NUMBER: $ISSUE_URL"
-
-          gh issue comment "$ISSUE_NUMBER" \
-            --repo "$FORK_REPO" \
-            --body "When you are done, commit the data with \`closes #$ISSUE_NUMBER\`"
-
-          echo "new_issue_number=$ISSUE_NUMBER" >> "$GITHUB_OUTPUT"
-          echo "new_issue_url=$ISSUE_URL" >> "$GITHUB_OUTPUT"
+            --title "Create an issue in your repo for the missing introduction section in the preregistration and assign the label PreregistrationInstruction" \
+            --body "$BODY" \
+            --label "newfork"
 
       - name: Close issue if comment has no question mark
         if: "!contains(github.event.comment.body, '?')"
