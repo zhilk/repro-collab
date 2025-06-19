@@ -37,9 +37,6 @@ jobs:
           FORKER: ${{ github.actor }}
         run: |
 
-          gh label create "newfork" --repo "$FORK_REPO" --description "new Fork" --color "#000000" || true
-          gh label create "PreregistrationInstruction" --repo "$FORK_REPO" --description "Add Description" --color "#b9ed4f" || true
-        
           BODY=$(cat <<EOF
           Hi @$FORKER!
 
@@ -74,8 +71,7 @@ jobs:
           gh issue create \
             --repo "$FORK_REPO" \
             --title "Create an issue in your repo for the missing introduction section in the preregistration and assign the label PreregistrationInstruction" \
-            --body "$BODY" \
-            --label "newfork"
+            --body "$BODY" \  
 
       - name: Close issue if comment has no question mark
         if: "!contains(github.event.comment.body, '?')"
