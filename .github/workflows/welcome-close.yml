@@ -68,7 +68,7 @@ jobs:
 
           gh issue create \
             --repo "$FORK_REPO" \
-            --title "Create an issue in your repo for the missing introduction section with title `Introduction needed`." \
+            --title "Create an issue in your repo for the missing introduction section with title \`Introduction needed\`." \
             --body "$BODY" \  
 
       - name: Close issue if comment has no question mark
