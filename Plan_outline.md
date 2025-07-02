@@ -6,9 +6,9 @@ Szene: We work on a preregistration to replicate the stevens power curve for com
 
 Szene: Your supervisor did something, you review it.
 
-0. I: Explain Fork and Issue.
+0. I passiv: Explain Fork and Issue.
 1. U: Create a GitHub account or login.
-2. U: Fork the repo. ☑️
+2. I & U activ: Fork the repo. ☑️
 3. C: Create issue in upstream telling them to enable issues in their fork. 
 4. TODO: Wir lassen das issue offen und automatisieren ein feedback loop, welcher im original issue bei jedem schritt ein update kommentiert. damit trigger auf main repro.
 5. U: Activate issues in your fork. ☑️
