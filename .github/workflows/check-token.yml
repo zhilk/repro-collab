@@ -20,7 +20,7 @@ jobs:
           --silent \
           --fail -H 'Content-Type:application/json' \
           -H 'Accept:application/json' \
-          -H 'authorization: token '"${{ secrets.GH_PAT_CROSSREPO }}" https://api.github.com/repos/MyOrg/MyRepo \
+          -H 'authorization: token '"${{ secrets.GH_PAT_CROSSREPO }}" https://api.github.com/repos/aaronpeikert/repro-collab \
           )"
           return_code=$?
           if [ 0 -eq $return_code ]; then
