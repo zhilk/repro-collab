@@ -1,0 +1,34 @@
+name: Check Personal Access Token if still up to date
+
+# Controls when the action will run.
+on:
+  workflow_dispatch:
+  schedule:
+    # Automatically run on every day at 07:00
+    - cron:  '0 7 * * *'
+    
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Personal Access Token
+        run: |
+          echo "Checking GitHub Token for expiry and/or access"
+          # prepend some arguments, but pass on whatever arguments this script was called with
+          output="$(curl -XGET \
+          --write '\n%{http_code}\n'  \
+          --silent \
+          --fail -H 'Content-Type:application/json' \
+          -H 'Accept:application/json' \
+          -H 'authorization: token '"${{ secrets.GH_PAT_CROSSREPO }}" https://api.github.com/repos/MyOrg/MyRepo \
+          )"
+          return_code=$?
+          if [ 0 -eq $return_code ]; then
+              # remove the "http_code" line from the end of the output, and parse it
+              echo "Yay! Your personal access code is not expired and has access to this repo"
+          else
+              echo "Boo! Your personal access code is expired or has no access"
+             # comment the next line if you don't want to see the HTTP status code and return messages from GitHub
+             echo "Failure: code=$output"
+             exit 1
+          fi
