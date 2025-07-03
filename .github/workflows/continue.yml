@@ -6,16 +6,19 @@ concurrency:
   cancel-in-progress: false
 
 on:
-  issues:
-    types: [edited]
+  issue_comment:
+    types: [created]
 
 jobs:
   route:
+    if: ${{ 
+      startsWith(github.event.comment.body, '/done ') &&
+      contains(github.event.issue.labels.*.name, 'newfork')
+    }}
     runs-on: ubuntu-latest
     steps:
-      # ────────────────────────────────────────────────────────────────
-      # 0) Extract the FORK_REPO (owner/repo) from the issue body
-      - name: Extract FORK from comment
+      # 0) Extract FORK_REPO from issue body
+      - name: Extract FORK from issue body
         id: vars
         env:
           ISSUE_BODY: ${{ github.event.issue.body }}
@@ -24,76 +27,58 @@ jobs:
             | grep -oP 'Fork repo: `\K[^`]+')"
           echo "fork_repo=$FORK_REPO" >> "$GITHUB_OUTPUT"
 
-      # ────────────────────────────────────────────────────────────────
-      # 1) Detect which box flipped
-      - id: detect
+      # 1) Parse the `/done N` command
+      - name: Parse slash-command
+        id: parse
         uses: actions/github-script@v6
         with:
           result-encoding: json
           script: |
-            const milestones = [
-              "Created GitHub account",
-              "Fork GitHub repo",
-              "Activate issues",
-              "Close an issue",
-              "Create an issue"
-            ];
-            const { changes, issue } = context.payload;
-            if (!changes?.body) return { justDone: '', nextTask: '' };
+            const body = context.payload.comment.body.trim();
+            const m = /^\/done\s+(\d+)/.exec(body);
+            if (!m) return { idx: -1 };
+            const num = parseInt(m[1], 10);
+            const max = 5;
+            return { idx: (num >= 1 && num <= max) ? num : -1 };
 
-            const oldLines = changes.body.from.split("\n").filter(l=>/^\s*-\s*\[[ x]\]/.test(l));
-            const newLines = issue.body.split("\n").filter(l=>/^\s*-\s*\[[ x]\]/.test(l));
-            if (oldLines.length !== newLines.length) return { justDone: '', nextTask: '' };
-
-            let flippedIndex = newLines.findIndex((line,idx) =>
-              /^\s*-\s*\[ \]\s+/.test(oldLines[idx]||"") &&
-              /^\s*-\s*\[x\]\s+/.test(line)
-            );
-            if (flippedIndex < 0) return { justDone: '', nextTask: '' };
-
-            const justDone  = milestones[flippedIndex];
-            const nextTask  = milestones[flippedIndex+1] || '';
-            return { justDone, nextTask };
-
-      # ────────────────────────────────────────────────────────────────
-      # 2) Reveal next milestone
+      # 2) Reveal next milestone by number
       - name: Reveal next milestone
-        if: steps.detect.outputs.nextTask != ''
+        if: steps.parse.outputs.idx != '-1'
         uses: actions/github-script@v6
         with:
           script: |
-            const next = "${{ steps.detect.outputs.nextTask }}";
+            const idx = parseInt("${{ steps.parse.outputs.idx }}", 10);
+            const nextNum = idx + 1;
+            if (nextNum > 5) return;
             await github.rest.issues.update({
               owner: context.repo.owner,
               repo:  context.repo.repo,
               issue_number: context.issue.number,
-              body: context.payload.issue.body + `\n- [ ] ${next}`
+              body: context.payload.issue.body +
+                    `\n- [ ] ${nextNum}.`
             });
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo:  context.repo.repo,
               issue_number: context.issue.number,
-              body: `✅ **${"${{ steps.detect.outputs.justDone }}"}** done! Next: **${next}**`
+              body: `✅ Milestone ${idx} done! Next up: milestone ${nextNum}.`
             });
 
-      # ────────────────────────────────────────────────────────────────
-      # 3) Task‐specific follow‐up: Activate issues (on the FORK)
-      - name: Verify “Activate issues”
-        if: steps.detect.outputs.justDone == 'Activate issues'
+      # 3) Verify milestone 3 (Activate issues) on their fork
+      - name: Verify milestone 3
+        if: steps.parse.outputs.idx == '3'
         uses: actions/github-script@v6
         env:
           FORK_REPO: ${{ steps.vars.outputs.fork_repo }}
         with:
           script: |
-            // split owner/repo
             const [owner, repo] = process.env.FORK_REPO.split('/');
-            // check the fork’s settings
             const { data } = await github.rest.repos.get({ owner, repo });
             if (!data.has_issues) {
-              // undo the check
+              // undo
               const undone = context.payload.issue.body.replace(
-                '- [x] Activate issues',
-                '- [ ] Activate issues'
+                /^- \[x\]\s+3\.\s*.*$/m,
+                '- [ ] 3.'
               );
               await github.rest.issues.update({
                 owner: context.repo.owner,
@@ -105,13 +90,89 @@ jobs:
                 owner: context.repo.owner,
                 repo:  context.repo.repo,
                 issue_number: context.issue.number,
-                body: '🚫 Issues are still disabled on your fork. Please enable them and retry.'
+                body: '🚫 Milestone 3 not complete. Please enable Issues on your fork, then `/done 3` again.'
               });
             } else {
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo:  context.repo.repo,
                 issue_number: context.issue.number,
-                body: '🎉 Issues are now active on your fork!'
+                body: '🎉 Milestone 3 complete!'
+              });
+            }
+
+      # 4) Verify milestone 4 (Close an issue) on their fork
+      - name: Verify milestone 4
+        if: steps.parse.outputs.idx == '4'
+        uses: actions/github-script@v6
+        env:
+          FORK_REPO: ${{ steps.vars.outputs.fork_repo }}
+        with:
+          script: |
+            const [owner, repo] = process.env.FORK_REPO.split('/');
+            const res = await github.rest.issues.listForRepo({
+              owner, repo, creator: context.actor, state: 'closed'
+            });
+            if (res.data.length === 0) {
+              const undone = context.payload.issue.body.replace(
+                /^- \[x\]\s+4\.\s*.*$/m,
+                '- [ ] 4.'
+              );
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo:  context.repo.repo,
+                issue_number: context.issue.number,
+                body: undone
+              });
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo:  context.repo.repo,
+                issue_number: context.issue.number,
+                body: '🚫 Milestone 4 not complete. Close an issue on your fork, then `/done 4` again.'
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo:  context.repo.repo,
+                issue_number: context.issue.number,
+                body: '🎉 Milestone 4 complete!'
+              });
+            }
+
+      # 5) Verify milestone 5 (Create an issue) on their fork
+      - name: Verify milestone 5
+        if: steps.parse.outputs.idx == '5'
+        uses: actions/github-script@v6
+        env:
+          FORK_REPO: ${{ steps.vars.outputs.fork_repo }}
+        with:
+          script: |
+            const [owner, repo] = process.env.FORK_REPO.split('/');
+            const res = await github.rest.issues.listForRepo({
+              owner, repo, creator: context.actor, state: 'open'
+            });
+            if (res.data.length === 0) {
+              const undone = context.payload.issue.body.replace(
+                /^- \[x\]\s+5\.\s*.*$/m,
+                '- [ ] 5.'
+              );
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo:  context.repo.repo,
+                issue_number: context.issue.number,
+                body: undone
+              });
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo:  context.repo.repo,
+                issue_number: context.issue.number,
+                body: '🚫 Milestone 5 not complete. Create an issue on your fork, then `/done 5` again.'
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo:  context.repo.repo,
+                issue_number: context.issue.number,
+                body: '🎉 Milestone 5 complete!'
               });
             }
