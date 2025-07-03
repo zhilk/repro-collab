@@ -213,15 +213,21 @@ jobs:
           FORK_REPO: ${{ steps.vars.outputs.fork_repo }}
         with:
           github-token: ${{ secrets.GH_PAT_CROSSREPO }}
+                - name: Verify milestone 5 and open preregistration PR
+        if: steps.parse.outputs.result == '5'
+        uses: actions/github-script@v7
+        env:
+          FORK_REPO: ${{ steps.vars.outputs.fork_repo }}
+        with:
+          github-token: ${{ secrets.GH_PAT_CROSSREPO }}
           script: |
             const [forkOwner, forkRepo] = process.env.FORK_REPO.split('/');
             const upstreamOwner = context.repo.owner;
             const upstreamRepo  = context.repo.repo;
-  
+
             // 1) Confirm “Create your own first issue” is closed in the fork
             const { data: forkIssues } = await github.rest.issues.listForRepo({
-              owner: forkOwner, repo: forkRepo,
-              state: 'all', per_page: 100
+              owner: forkOwner, repo: forkRepo, state: 'all', per_page: 100
             });
             const intro = forkIssues.find(i =>
               i.title.toLowerCase() === 'create your own first issue'
@@ -238,28 +244,32 @@ jobs:
               });
               return;
             }
-  
+
             // 2) Cross off “5.” and reveal “6.” upstream
-            const updatedUp = context.payload.issue.body
+            const newUpBody = context.payload.issue.body
               .replace(/^(\s*-\s*\[)\s\](\s*5\..*)$/m, '$1x]$2')
               + '\n- [ ] 6. Review a PR';
             await github.rest.issues.update({
               owner: upstreamOwner,
               repo:  upstreamRepo,
               issue_number: context.issue.number,
-              body: updatedUp
+              body: newUpBody
             });
-  
-            // 3) Parse FORK_SHA straight from the issue body
-            const shaMatch = context.payload.issue.body.match(
-              /Fork sha:\s*`([0-9a-fA-F]+)`/
-            );
-            if (!shaMatch) {
-              throw new Error('Could not find Fork sha in issue body');
-            }
-            const mergeBaseSha = shaMatch[1];
-  
-            // 4) Create a new branch in UPSTREAM at that exact SHA
+
+            // 3) Figure out the exact fork-point by comparing upstream vs fork
+            const { data: upInfo } = await github.rest.repos.get({
+              owner: upstreamOwner, repo: upstreamRepo
+            });
+            const defaultBranch = upInfo.default_branch;
+            const compare = await github.rest.repos.compareCommits({
+              owner: upstreamOwner,
+              repo:  upstreamRepo,
+              base:  defaultBranch,
+              head:  `${forkOwner}:${defaultBranch}`
+            });
+            const mergeBaseSha = compare.data.merge_base_commit.sha;
+
+            // 4) Create a branch in upstream at that precise SHA
             const branchName = `onboarding/prereg-${Date.now()}`;
             await github.rest.git.createRef({
               owner: upstreamOwner,
@@ -267,8 +277,8 @@ jobs:
               ref:   `refs/heads/${branchName}`,
               sha:   mergeBaseSha
             });
-  
-            // 5) Read or init preregistration.md on that branch
+
+            // 5) Read or initialize preregistration.md on that branch
             let fileSha = null, content = '';
             try {
               const { data: file } = await github.rest.repos.getContent({
@@ -280,11 +290,11 @@ jobs:
               fileSha = file.sha;
               content = Buffer.from(file.content, 'base64').toString('utf8');
             } catch {}
-  
-            // 6) Append the onboarding line and commit
-            const newContent = content +
+
+            // 6) Append the onboarding line & commit it
+            const updated = content +
               `\nOnboarding preregistration completed by @${context.actor}\n`;
-            const encoded = Buffer.from(newContent, 'utf8').toString('base64');
+            const encoded = Buffer.from(updated, 'utf8').toString('base64');
             await github.rest.repos.createOrUpdateFileContents({
               owner:   upstreamOwner,
               repo:    upstreamRepo,
@@ -294,7 +304,7 @@ jobs:
               branch:  branchName,
               sha:     fileSha
             });
-  
+
             // 7) Open the PR in the fork, sourcing from that upstream branch
             const { data: forkInfo } = await github.rest.repos.get({
               owner: forkOwner, repo: forkRepo
