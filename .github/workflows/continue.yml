@@ -36,7 +36,7 @@ jobs:
             const num = parseInt(m[1], 10);
             return (num >= 1 && num <= 5) ? String(num) : '-1';
       - name: Verify milestone 3
-        if: steps.parse.outputs.idx == '3'
+        if: steps.parse.outputs.result == '3'
         uses: actions/github-script@v6
         env:
           FORK_REPO: ${{ steps.vars.outputs.fork_repo }}
