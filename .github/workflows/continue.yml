@@ -265,7 +265,8 @@ jobs:
               `\nOnboarding preregistration completed by @${context.actor}\n`;
             const encoded = Buffer.from(newContent, 'utf8').toString('base64');
             await github.rest.repos.createOrUpdateFileContents({
-              context.repo.owner, context.repo.repo,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
               path: 'preregistration.md',
               message: 'Add preregistration onboarding line',
               content: encoded,
