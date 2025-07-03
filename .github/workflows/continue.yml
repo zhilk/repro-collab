@@ -1,6 +1,11 @@
 # .github/workflows/milestone-router.yml
 name: Milestone Router
 
+permissions:
+  contents: write         # for branch + file ops in upstream
+  issues:   write         # for issue edits/comments in upstream
+  pull-requests: write    # for PR creation in fork
+
 concurrency:
   group: "milestones-${{ github.event.issue.number }}"
   cancel-in-progress: false
