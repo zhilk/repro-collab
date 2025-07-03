@@ -310,4 +310,5 @@ jobs:
               head:  `${upstreamOwner}:${branchName}`,
               base:  forkDefault,
               body:  'This PR adds a single line to preregistration.md as part of the onboarding workflow. Please review.'
+              maintainer_can_modify: true  
             });
