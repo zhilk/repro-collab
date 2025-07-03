@@ -43,20 +43,43 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_PAT_CROSSREPO }}
         with:
           github-token: ${{ secrets.GH_PAT_CROSSREPO }}
+      - name: Verify milestone 3
+        if: steps.parse.outputs.idx == '3'
+        uses: actions/github-script@v6
+        env:
+          FORK_REPO: ${{ steps.vars.outputs.fork_repo }}
+        with:
           script: |
             const [owner, repo] = process.env.FORK_REPO.split('/');
             const { data } = await github.rest.repos.get({ owner, repo });
+
             if (!data.has_issues) {
+              // failure feedback only
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
-                repo:  context.repo.repo,
+                repo: context.repo.repo,
                 issue_number: context.issue.number,
                 body: '🚫 Milestone 3 not complete. Please enable Issues on your fork, then `/done 3` again.'
               });
             } else {
-              await github.rest.issues.createComment({
+              // 1) Cross off milestone 3 in the issue body
+              const updated = context.payload.issue.body.replace(
+                // match the line starting with "- [ ] 3."
+                /^\s*-\s*\[\s\]\s*3\.\s.*$/m,
+                '- [x] 3.'
+              );
+
+              await github.rest.issues.update({
                 owner: context.repo.owner,
                 repo:  context.repo.repo,
+                issue_number: context.issue.number,
+                body: updated
+              });
+
+              // 2) Success comment
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
                 issue_number: context.issue.number,
                 body: '🎉 Milestone 3 complete!'
               });
