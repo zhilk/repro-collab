@@ -84,9 +84,8 @@ jobs:
             } else {
               // 1) Cross off milestone 3 in the issue body
               const updated = context.payload.issue.body.replace(
-                // match the line starting with "- [ ] 3."
-                /^\s*-\s*\[\s\]\s*3\.\s.*$/m,
-                '- [x] 3.'
+                /^(\s*-\s*\[)\s\](\s*3\..*)$/m,
+                '$1x]$2'
               );
 
               await github.rest.issues.update({
