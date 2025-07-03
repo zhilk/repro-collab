@@ -215,58 +215,40 @@ jobs:
           github-token: ${{ secrets.GH_PAT_CROSSREPO }}
           script: |
             const [owner, repo] = process.env.FORK_REPO.split('/');
+            // … first, verify that “Create your own first issue” is closed …
 
-            // 1) List all issues in the fork
-            const { data: all } = await github.rest.issues.listForRepo({
-              owner, repo,
-              state: 'all',
-              per_page: 10
-            });
-
-            // 2) Find the “Create your own first issue”
-            const title = 'create your own first issue';
-            const intro = all.find(i => i.title.toLowerCase() === title);
-
-            // 3) If not found or not closed → error, with a link
-            if (!intro || intro.state !== 'closed') {
-              const issueUrl = intro
-                ? intro.html_url
-                : `https://github.com/${owner}/${repo}/issues`;
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo:  context.repo.repo,
-                issue_number: context.issue.number,
-                body: `🚫 Milestone 5 not complete. Please close the [“Create your own first issue”](${issueUrl}) in your fork, then run \`/done 5\` again.`
-              });
-              return;
-            }
-
-            // 2) Cross off “5.” upstream
-            const updated = context.payload.issue.body.replace(
-              /^(\s*-\s*\[)\s\](\s*5\..*)$/m,
-              '$1x]$2'
-            );
+            // 1) Cross off “5.” and reveal “6.” upstream
+            const updatedUpstream = context.payload.issue.body
+              .replace(
+                /^(\s*-\s*\[)\s\](\s*5\..*)$/m,
+                '$1x]$2'
+              ) + '\n- [ ] 6. Review a PR';
             await github.rest.issues.update({
               owner: context.repo.owner,
               repo:  context.repo.repo,
               issue_number: context.issue.number,
-              body: updated
+              body: updatedUpstream
             });
 
-            // 3) Create a branch in the fork
-            const { data: repoInfo } = await github.rest.repos.get({ owner, repo });
-            const defaultBranch = repoInfo.default_branch;
+            // ───────────────────────────────────────────────────────
+            // 2) Compute merge-base = fork’s default-branch HEAD
+            const { data: forkInfo } = await github.rest.repos.get({ owner, repo });
+            const defaultBranch = forkInfo.default_branch;
             const { data: refData } = await github.rest.git.getRef({
-              owner, repo, ref: `heads/${defaultBranch}`
+              owner, repo,
+              ref: `heads/${defaultBranch}`
             });
+            const mergeBaseSha = refData.object.sha; // this is the commit at fork time
+
+            // 3) Create a new branch at that SHA
             const branchName = `onboarding/prereg-${Date.now()}`;
             await github.rest.git.createRef({
               owner, repo,
               ref: `refs/heads/${branchName}`,
-              sha: refData.object.sha
+              sha: mergeBaseSha
             });
 
-            // 4) Read (or init) preregistration.md
+            // 4) Read (or init) preregistration.md at the merge-base
             let fileSha = null, content = '';
             try {
               const { data: file } = await github.rest.repos.getContent({
@@ -278,12 +260,12 @@ jobs:
               content = Buffer.from(file.content, 'base64').toString('utf8');
             } catch {}
 
-            // 5) Append one line
-            const newContent = content + `\nOnboarding preregistration completed by @${context.actor}\n`;
+            // 5) Append one line, commit on this new branch
+            const newContent = content +
+              `\nOnboarding preregistration completed by @${context.actor}\n`;
             const encoded = Buffer.from(newContent, 'utf8').toString('base64');
-
             await github.rest.repos.createOrUpdateFileContents({
-              owner, repo,
+              context.repo.owner, context.repo.repo,
               path: 'preregistration.md',
               message: 'Add preregistration onboarding line',
               content: encoded,
@@ -291,11 +273,11 @@ jobs:
               sha: fileSha
             });
 
-            // 6) Open a PR in the fork
+            // 6) Open a PR in the fork for the student to review
             await github.rest.pulls.create({
               owner, repo,
               title: 'Add preregistration line for onboarding',
-              head: branchName,
+              head: `${context.repo.owner}:${branchName}`,  
               base: defaultBranch,
               body: 'This PR adds a single line to preregistration.md as part of the onboarding workflow. Please review.'
             });
