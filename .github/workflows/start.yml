@@ -8,62 +8,57 @@ jobs:
   welcome:
     runs-on: ubuntu-latest
     steps:
-      - name: Create issue in origin repo for forker
-        id: create_issue
-        env:
-          GH_TOKEN: ${{ secrets.GH_PAT_CROSSREPO }}
-          FORKER: ${{ github.actor }}
-          UPSTREAM_REPO: ${{ github.repository }}
-          FORK_REPO: ${{ github.event.forkee.full_name }}
-        run: |
-          BODY=$(cat <<EOF
-          Hi @$FORKER!
-          
-          Fork repo: \`${FORK_REPO}\`
-          
-          Thank you for forking the repository and getting started with the workshop!
-          
-          In this issue we track your progress throughout the workshop.
-          Every time you reply with \`/done NUMBER\` this list gets updated:
-          
-          - [x] 1. Created GitHub account
-          - [x] 2. Fork GitHub repo
-          - [ ] 3. Activate issues in your fork
-          EOF
-          )
-          
-          # create the issue and capture its number
-          ISSUE_NUMBER=$(gh issue create \
-            --repo "$UPSTREAM_REPO" \
-            --title "@$FORKER Started participating in the workshop! 🎉" \
-            --body "$BODY" \
-            --label "newfork" \
-            --json number \
-            --jq .number)
-          
-          echo "issue_number=$ISSUE_NUMBER" >> "$GITHUB_OUTPUT"
+      - name: Create onboarding issue & post next-step instructions
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GH_PAT_CROSSREPO }}
+          script: |
+            const FORKER    = context.actor;
+            const UPSTREAM  = context.repo.owner + '/' + context.repo.repo;
+            const FORK_REPO = context.payload.forkee.full_name;
 
-      - name: Post next‐step instructions
-        env:
-          GH_TOKEN: ${{ secrets.GH_PAT_CROSSREPO }}
-          FORK_REPO: ${{ github.event.forkee.full_name }}
-          ISSUE_NUMBER: ${{ steps.create_issue.outputs.issue_number }}
-        run: |
-          COMMENT_BODY=$(cat <<EOF
-          **Next step:** Please enable "Issues" in your forked repository so we can collaborate and track your progress or questions.
+            // 1) Build the initial issue body
+            const body = `
+            Hi @${FORKER}!
 
-          To enable issues in your fork:
+            Fork repo: \`${FORK_REPO}\`
 
-          1. Go to your **"Settings"** in your repository: https://github.com/${FORK_REPO}/settings  
-          2. Scroll down to the **"Features"** section.  
-          3. Check the box labeled **"Issues"**.  
-          4. When you’re done, reply with \`/done 3\` below.
+            Thank you for forking the repository and getting started with the workshop!
 
-          Thank you!
-          EOF
-          )
-          
-          gh issue comment \
-            --repo "${{ github.repository }}" \
-            --issue "$ISSUE_NUMBER" \
-            --body "$COMMENT_BODY"
+            In this issue we track your progress throughout the workshop.
+            Every time you reply with \`/done NUMBER\` this list gets updated:
+
+            - [x] 1. Created GitHub account
+            - [x] 2. Fork GitHub repo
+            - [ ] 3. Activate issues in your fork
+            `.trim();
+
+            // 2) Create the issue
+            const issue = await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo:  context.repo.repo,
+              title: `@${FORKER} Started participating in the workshop! 🎉`,
+              body,
+              labels: ['newfork']
+            });
+
+            // 3) Post the detailed "Next step" instructions as a comment
+            const commentBody = `
+            **Next step:** Please enable "Issues" in your forked repository so we can collaborate and track your progress or questions.
+
+            To enable issues in your fork:
+
+            1. Go to your **"Settings"** in your repository: https://github.com/${FORK_REPO}/settings  
+            2. Scroll down to the **"Features"** section.  
+            3. Check the box labeled **"Issues"**.  
+            4. When you’re done, reply with \`/done 3\` below.
+
+            Thank you!
+            `.trim();
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo:  context.repo.repo,
+              issue_number: issue.data.number,
+              body: commentBody
+            });
