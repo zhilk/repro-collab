@@ -1,0 +1,117 @@
+# .github/workflows/milestone-router.yml
+name: Milestone Router
+
+concurrency:
+  group: "milestones-${{ github.event.issue.number }}"
+  cancel-in-progress: false
+
+on:
+  issues:
+    types: [edited]
+
+jobs:
+  route:
+    runs-on: ubuntu-latest
+    steps:
+      # ────────────────────────────────────────────────────────────────
+      # 0) Extract the FORK_REPO (owner/repo) from the issue body
+      - name: Extract FORK from comment
+        id: vars
+        env:
+          ISSUE_BODY: ${{ github.event.issue.body }}
+        run: |
+          FORK_REPO="$(echo "$ISSUE_BODY" \
+            | grep -oP 'Fork repo: `\K[^`]+')"
+          echo "fork_repo=$FORK_REPO" >> "$GITHUB_OUTPUT"
+
+      # ────────────────────────────────────────────────────────────────
+      # 1) Detect which box flipped
+      - id: detect
+        uses: actions/github-script@v6
+        with:
+          result-encoding: json
+          script: |
+            const milestones = [
+              "Created GitHub account",
+              "Fork GitHub repo",
+              "Activate issues",
+              "Close an issue",
+              "Create an issue"
+            ];
+            const { changes, issue } = context.payload;
+            if (!changes?.body) return { justDone: '', nextTask: '' };
+
+            const oldLines = changes.body.from.split("\n").filter(l=>/^\s*-\s*\[[ x]\]/.test(l));
+            const newLines = issue.body.split("\n").filter(l=>/^\s*-\s*\[[ x]\]/.test(l));
+            if (oldLines.length !== newLines.length) return { justDone: '', nextTask: '' };
+
+            let flippedIndex = newLines.findIndex((line,idx) =>
+              /^\s*-\s*\[ \]\s+/.test(oldLines[idx]||"") &&
+              /^\s*-\s*\[x\]\s+/.test(line)
+            );
+            if (flippedIndex < 0) return { justDone: '', nextTask: '' };
+
+            const justDone  = milestones[flippedIndex];
+            const nextTask  = milestones[flippedIndex+1] || '';
+            return { justDone, nextTask };
+
+      # ────────────────────────────────────────────────────────────────
+      # 2) Reveal next milestone
+      - name: Reveal next milestone
+        if: steps.detect.outputs.nextTask != ''
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const next = "${{ steps.detect.outputs.nextTask }}";
+            await github.rest.issues.update({
+              owner: context.repo.owner,
+              repo:  context.repo.repo,
+              issue_number: context.issue.number,
+              body: context.payload.issue.body + `\n- [ ] ${next}`
+            });
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo:  context.repo.repo,
+              issue_number: context.issue.number,
+              body: `✅ **${"${{ steps.detect.outputs.justDone }}"}** done! Next: **${next}**`
+            });
+
+      # ────────────────────────────────────────────────────────────────
+      # 3) Task‐specific follow‐up: Activate issues (on the FORK)
+      - name: Verify “Activate issues”
+        if: steps.detect.outputs.justDone == 'Activate issues'
+        uses: actions/github-script@v6
+        env:
+          FORK_REPO: ${{ steps.vars.outputs.fork_repo }}
+        with:
+          script: |
+            // split owner/repo
+            const [owner, repo] = process.env.FORK_REPO.split('/');
+            // check the fork’s settings
+            const { data } = await github.rest.repos.get({ owner, repo });
+            if (!data.has_issues) {
+              // undo the check
+              const undone = context.payload.issue.body.replace(
+                '- [x] Activate issues',
+                '- [ ] Activate issues'
+              );
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo:  context.repo.repo,
+                issue_number: context.issue.number,
+                body: undone
+              });
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo:  context.repo.repo,
+                issue_number: context.issue.number,
+                body: '🚫 Issues are still disabled on your fork. Please enable them and retry.'
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo:  context.repo.repo,
+                issue_number: context.issue.number,
+                body: '🎉 Issues are now active on your fork!'
+              });
+            }
