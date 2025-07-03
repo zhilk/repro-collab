@@ -11,10 +11,7 @@ on:
 
 jobs:
   route:
-    if: ${{ 
-      startsWith(github.event.comment.body, '/done ') &&
-      contains(github.event.issue.labels.*.name, 'newfork')
-    }}
+    if: ${{ startsWith(github.event.comment.body, '/done ') && contains(github.event.issue.labels.*.name, 'newfork') }}
     runs-on: ubuntu-latest
     steps:
       # 0) Extract FORK_REPO from issue body
