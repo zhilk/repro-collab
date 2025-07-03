@@ -42,7 +42,6 @@ jobs:
           FORK_REPO: ${{ steps.vars.outputs.fork_repo }}
         with:
           github-token: ${{ secrets.GH_PAT_CROSSREPO }}
-        with:
           script: |
             const [owner, repo] = process.env.FORK_REPO.split('/');
             const { data } = await github.rest.repos.get({ owner, repo });
