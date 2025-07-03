@@ -213,13 +213,6 @@ jobs:
           FORK_REPO: ${{ steps.vars.outputs.fork_repo }}
         with:
           github-token: ${{ secrets.GH_PAT_CROSSREPO }}
-                - name: Verify milestone 5 and open preregistration PR
-        if: steps.parse.outputs.result == '5'
-        uses: actions/github-script@v7
-        env:
-          FORK_REPO: ${{ steps.vars.outputs.fork_repo }}
-        with:
-          github-token: ${{ secrets.GH_PAT_CROSSREPO }}
           script: |
             const [forkOwner, forkRepo] = process.env.FORK_REPO.split('/');
             const upstreamOwner = context.repo.owner;
