@@ -215,19 +215,28 @@ jobs:
           github-token: ${{ secrets.GH_PAT_CROSSREPO }}
           script: |
             const [owner, repo] = process.env.FORK_REPO.split('/');
-            // 1) Confirm “Create your own first issue” is closed
-            const all = await github.rest.issues.listForRepo({
-              owner, repo, state: 'all', per_page: 100
+
+            // 1) List all issues in the fork
+            const { data: all } = await github.rest.issues.listForRepo({
+              owner, repo,
+              state: 'all',
+              per_page: 10
             });
-            const intro = all.data.find(i =>
-              i.title.toLowerCase() === 'create your own first issue'
-            );
+
+            // 2) Find the “Create your own first issue”
+            const title = 'create your own first issue';
+            const intro = all.find(i => i.title.toLowerCase() === title);
+
+            // 3) If not found or not closed → error, with a link
             if (!intro || intro.state !== 'closed') {
+              const issueUrl = intro
+                ? intro.html_url
+                : `https://github.com/${owner}/${repo}/issues`;
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo:  context.repo.repo,
                 issue_number: context.issue.number,
-                body: '🚫 Milestone 5 not complete. Please close the “Create your own first issue” in your fork, then run `/done 5` again.'
+                body: `🚫 Milestone 5 not complete. Please close the [“Create your own first issue”](${issueUrl}) in your fork, then run \`/done 5\` again.`
               });
               return;
             }
