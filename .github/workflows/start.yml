@@ -17,11 +17,26 @@ jobs:
             const UPSTREAM  = context.repo.owner + '/' + context.repo.repo;
             const FORK_REPO = context.payload.forkee.full_name;
 
-            // 1) Build the initial issue body
+            // Fetch the fork’s default-branch HEAD SHA
+            const [fOwner, fRepo] = FORK_REPO.split('/');
+            const forkInfo = await github.rest.repos.get({
+              owner: fOwner,
+              repo:  fRepo
+            });
+            const defaultBranch = forkInfo.data.default_branch;
+            const refData = await github.rest.git.getRef({
+              owner: fOwner,
+              repo:  fRepo,
+              ref:   `heads/${defaultBranch}`
+            });
+            const FORK_SHA = refData.data.object.sha;
+
+            // 1) Build the initial issue body, embedding FORK_REPO and FORK_SHA
             const body = `
             Hi @${FORKER}!
 
             Fork repo: \`${FORK_REPO}\`
+            Fork sha:  \`${FORK_SHA}\`
 
             Thank you for forking the repository and getting started with the workshop!
 
