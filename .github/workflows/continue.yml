@@ -82,24 +82,37 @@ jobs:
                 body: '🚫 Milestone 3 not complete. Please enable Issues on your fork, then `/done 3` again.'
               });
             } else {
-              // 1) Cross off milestone 3 in the issue body
-              const updated = context.payload.issue.body.replace(
+              // 1) Cross off milestone 3 in the upstream issue body
+              let updatedBody = context.payload.issue.body.replace(
+                // match only the checkbox for "3."
                 /^(\s*-\s*\[)\s\](\s*3\..*)$/m,
                 '$1x]$2'
               );
+              
+              // 2) Reveal milestone 4 in that same list
+              updatedBody += '\n- [ ] 4. Close an issue';
 
               await github.rest.issues.update({
                 owner: context.repo.owner,
                 repo:  context.repo.repo,
                 issue_number: context.issue.number,
-                body: updated
+                body: updatedBody
               });
-
-              // 2) Success comment
+              
+              // 3) Celebrate in the upstream issue
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
-                repo: context.repo.repo,
+                repo:  context.repo.repo,
                 issue_number: context.issue.number,
-                body: '🎉 Milestone 3 complete!'
+                body: '🎉 Milestone 3 complete—“Activate issues”! Milestone 4 is now available, and your first-issue template is waiting in your fork.'
+              });
+
+              // 4) Create a new issue in the fork for them to "create your own first issue"
+              const onboardingUrl = context.payload.issue.html_url;
+              await github.rest.issues.create({
+                owner: forkOwner,
+                repo:  forkRepoName,
+                title: 'Create your own first issue',
+                body: `👋 Great work on enabling issues! Now, please create your very first issue in this fork. \n\nRelated: ${onboardingUrl}`
               });
             }
