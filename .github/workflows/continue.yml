@@ -110,8 +110,8 @@ jobs:
               // 4) Create a new issue in the fork for them to "create your own first issue"
               const onboardingUrl = context.payload.issue.html_url;
               await github.rest.issues.create({
-                owner: forkOwner,
-                repo:  forkRepoName,
+                owner: owner,
+                repo:  repo,
                 title: 'Create your own first issue',
                 body: `👋 Great work on enabling issues! Now, please create your very first issue in this fork. \n\nRelated: ${onboardingUrl}`
               });
