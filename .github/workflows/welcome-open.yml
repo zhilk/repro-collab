@@ -1,3 +1,4 @@
+# .github/workflows/fork-triggered-welcome.yml
 name: Fork Triggered Welcome Issue
 
 on:
@@ -19,25 +20,30 @@ jobs:
           
           Fork repo: \`${FORK_REPO}\`
           
-          Thank you for forking the repository!
+          Thank you for forking the repository and getting started with the workshop!
+          In this issue, we track your progress. Simply click on milestones that you have achieved, we check that and the next task appears here.
           
           **Next step:** Please enable "Issues" in your forked repository so we can collaborate and track your progress or questions.
           
           To enable issues in your fork:
           
-          1. Go to your **"Settings"** in Your repository: [https://github.com/$FORK_REPO/settings](https://github.com/$FORK_REPO/settings)
+          1. Go to your **"Settings"** in your repository: [https://github.com/$FORK_REPO/settings](https://github.com/$FORK_REPO/settings)
           2. Scroll down to the **"Features"** section.
           3. Check the box labeled **"Issues"**.
           4. You're done! You can now create and track issues in your fork.
           
-          Once you have enabled issues, please leave a comment here to let us know. If you have any questions, feel free to ask!
-          
           Thank you!
+          
+          In this issue we track your progress throughout the workshop:
+          
+          - [x] Created GitHub account
+          - [x] Fork GitHub repo
+          - [ ] Activate issues
           EOF
           )
 
           gh issue create \
             --repo "$UPSTREAM_REPO" \
-            --title "@$FORKER Please Enable Issues in Your Forked Repository!" \
+            --title "@$FORKER Started participating in the workshop! 🎉" \
             --body "$BODY" \
             --label "newfork"
