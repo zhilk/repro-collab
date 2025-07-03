@@ -67,6 +67,7 @@ jobs:
         uses: actions/github-script@v6
         env:
           FORK_REPO: ${{ steps.vars.outputs.fork_repo }}
+          GH_TOKEN: ${{ secrets.GH_PAT_CROSSREPO }}
         with:
           script: |
             const [owner, repo] = process.env.FORK_REPO.split('/');
