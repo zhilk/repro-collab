@@ -35,6 +35,6 @@ jobs:
             if (!m) return '-1';
             const num = parseInt(m[1], 10);
             return (num >= 1 && num <= 5) ? String(num) : '-1';
-
       - name: Print parsed result
-        run: echo "Parsed slash-command index: ${{ steps.parse.outputs.result }}"
+        run: |
+          echo "Parsed slash-command index: ${{ steps.parse.outputs.result }}"
