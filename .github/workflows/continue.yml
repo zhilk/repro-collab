@@ -35,6 +35,27 @@ jobs:
             if (!m) return '-1';
             const num = parseInt(m[1], 10);
             return (num >= 1 && num <= 5) ? String(num) : '-1';
-      - name: Print parsed result
-        run: |
-          echo "Parsed slash-command index: ${{ steps.parse.outputs.result }}"
+      - name: Verify milestone 3
+        if: steps.parse.outputs.idx == '3'
+        uses: actions/github-script@v6
+        env:
+          FORK_REPO: ${{ steps.vars.outputs.fork_repo }}
+        with:
+          script: |
+            const [owner, repo] = process.env.FORK_REPO.split('/');
+            const { data } = await github.rest.repos.get({ owner, repo });
+            if (!data.has_issues) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo:  context.repo.repo,
+                issue_number: context.issue.number,
+                body: '🚫 Milestone 3 not complete. Please enable Issues on your fork, then `/done 3` again.'
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo:  context.repo.repo,
+                issue_number: context.issue.number,
+                body: '🎉 Milestone 3 complete!'
+              });
+            }
