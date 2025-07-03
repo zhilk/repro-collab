@@ -21,8 +21,7 @@ jobs:
           Fork repo: \`${FORK_REPO}\`
           
           Thank you for forking the repository and getting started with the workshop!
-          In this issue, we track your progress. Simply click on milestones that you have achieved, we check that and the next task appears here.
-          
+
           **Next step:** Please enable "Issues" in your forked repository so we can collaborate and track your progress or questions.
           
           To enable issues in your fork:
@@ -30,15 +29,16 @@ jobs:
           1. Go to your **"Settings"** in your repository: [https://github.com/$FORK_REPO/settings](https://github.com/$FORK_REPO/settings)
           2. Scroll down to the **"Features"** section.
           3. Check the box labeled **"Issues"**.
-          4. You're done! You can now create and track issues in your fork.
+          4. When your done, reply with `\done 3` below.
           
           Thank you!
           
-          In this issue we track your progress throughout the workshop:
+          In this issue we track your progress throughout the workshop.
+          Everytime you reply with `\done NUMBER` this list gets updated:
           
-          - [x] Created GitHub account
-          - [x] Fork GitHub repo
-          - [ ] Activate issues
+          - [x] 1. Created GitHub account
+          - [x] 2. Fork GitHub repo
+          - [ ] 3. Activate issues
           EOF
           )
 
