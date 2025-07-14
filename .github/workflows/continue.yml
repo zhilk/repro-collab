@@ -2,7 +2,8 @@
 name: Milestone Router
 
 concurrency:
-  group: "milestones-${{ github.event.issue.number  }}"
+  #TODO: Very bad hotfix
+  group: "milestones-${{ github.event.issue.number || github.run_id }}"
   cancel-in-progress: false
 
 on:
