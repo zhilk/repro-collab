@@ -112,8 +112,19 @@ jobs:
               await github.rest.issues.create({
                 owner: owner,
                 repo:  repo,
-                title: 'Create your own first issue',
-                body: `👋 Great work on enabling issues! Now, please create your very first issue in this fork. Call it \`introduction needed\` \n\nRelated: ${onboardingUrl}`
+                title: 'Create your first issue',
+                body: `Great work on enabling issues! Now create your first one.
+
+                      **Task:** Create a new issue in this repository titled "introduction needed"
+                      
+                      ---
+                      
+                      This helps you practice the basics of issue creation. 
+                      Go to the Issues tab, click "New Issue", and use that exact title. 
+                      
+                      Feel free to add a brief introduction about yourself, what brings you to this workshop and what you're hoping to learn?
+                      
+                      Related: ${onboardingUrl}`
               });
             }
       - name: Verify milestone 4
@@ -207,135 +218,146 @@ jobs:
               });
             }
     # 5.1) Verify “Create your own first issue” is closed in the fork
-    - name: Verify milestone 5 in fork
-      uses: actions/github-script@v7
-      with:
-        github-token: ${{ secrets.GH_PAT_CROSSREPO }}
-        script: |
-          const [forkOwner, forkRepo] = process.env.FORK_REPO.split('/');
-          // list last 100 issues in the fork
-          const { data: issues } = await github.rest.issues.listForRepo({
-            owner: forkOwner, repo: forkRepo, state: 'all', per_page: 100
-          });
-          const intro = issues.find(i =>
-            i.title.toLowerCase() === 'create your own first issue'
-          );
-          if (!intro || intro.state !== 'closed') {
-            const url = intro
-              ? intro.html_url
-              : `https://github.com/${forkOwner}/${forkRepo}/issues`;
-            await github.rest.issues.createComment({
+      - name: Verify milestone 5
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GH_PAT_CROSSREPO }}
+          script: |
+            const [forkOwner, forkRepo] = process.env.FORK_REPO.split('/');
+            // list last 100 issues in the fork
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: forkOwner, repo: forkRepo, state: 'all', per_page: 100
+            });
+            const intro = issues.find(i =>
+              i.title.toLowerCase() === 'create your own first issue'
+            );
+            if (!intro || intro.state !== 'closed') {
+              const url = intro
+                ? intro.html_url
+                : `https://github.com/${forkOwner}/${forkRepo}/issues`;
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo:  context.repo.repo,
+                issue_number: context.issue.number,
+                body: `🚫 Milestone 5 not complete. Please close [“Create your own first issue”](${url}) in your fork, then run \`/done 5\` again.`
+              });
+              core.setOutput('abort', 'true');
+            } else {
+              core.setOutput('abort', 'false');
+            }
+
+    # 5.2) Cross off “5.” & reveal “6.” in the upstream issue
+      - name: Update upstream checklist
+        if: steps.parse.outputs.result == '5' && steps[0].outputs.abort == 'false'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const updated = context.payload.issue.body
+              .replace(/^(\s*-\s*\[)\s\](\s*5\..*)$/m, '$1x]$2')
+              + '\n- [ ] 6. Review a PR';
+            await github.rest.issues.update({
               owner: context.repo.owner,
               repo:  context.repo.repo,
               issue_number: context.issue.number,
-              body: `🚫 Milestone 5 not complete. Please close [“Create your own first issue”](${url}) in your fork, then run \`/done 5\` again.`
+              body: updated
             });
-            core.setOutput('abort', 'true');
-          } else {
-            core.setOutput('abort', 'false');
-          }
-
-    # 5.2) Cross off “5.” & reveal “6.” in the upstream issue
-    - name: Update upstream checklist
-      if: steps.parse.outputs.result == '5' && steps[0].outputs.abort == 'false'
-      uses: actions/github-script@v7
-      script: |
-        const updated = context.payload.issue.body
-          .replace(/^(\s*-\s*\[)\s\](\s*5\..*)$/m, '$1x]$2')
-          + '\n- [ ] 6. Review a PR';
-        await github.rest.issues.update({
-          owner: context.repo.owner,
-          repo:  context.repo.repo,
-          issue_number: context.issue.number,
-          body: updated
-        });
 
     # 5.3) Compute the exact merge‐base SHA (upstream↔fork)
-    - name: Compute merge-base
-      id: merge
-      uses: actions/github-script@v7
-      with:
-        github-token: ${{ secrets.GH_PAT_CROSSREPO }}
-        result-encoding: string
-        script: |
-          const [forkOwner, forkRepo] = process.env.FORK_REPO.split('/');
-          const upDef = (await github.rest.repos.get({
-            owner: context.repo.owner, repo: context.repo.repo
-          })).data.default_branch;
-          const fkDef = (await github.rest.repos.get({
-            owner: forkOwner, repo: forkRepo
-          })).data.default_branch;
-          const comp = await github.rest.repos.compareCommits({
-            owner: context.repo.owner,
-            repo:  context.repo.repo,
-            base:  upDef,
-            head:  `${forkOwner}:${fkDef}`
-          });
-          return comp.data.merge_base_commit.sha;
+      - name: Compute merge-base
+        id: merge
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GH_PAT_CROSSREPO }}
+          result-encoding: string
+          script: |
+            const [forkOwner, forkRepo] = process.env.FORK_REPO.split('/');
+            const upDef = (await github.rest.repos.get({
+              owner: context.repo.owner, repo: context.repo.repo
+            })).data.default_branch;
+            const fkDef = (await github.rest.repos.get({
+              owner: forkOwner, repo: forkRepo
+            })).data.default_branch;
+            const comp = await github.rest.repos.compareCommits({
+              owner: context.repo.owner,
+              repo:  context.repo.repo,
+              base:  upDef,
+              head:  `${forkOwner}:${fkDef}`
+            });
+            return comp.data.merge_base_commit.sha;
 
     # 5.4) Create a new branch in upstream at that SHA
-    - name: Create upstream branch
-      if: steps.parse.outputs.result == '5' && steps.merge.outputs.result != ''
-      uses: actions/github-script@v7
-      script: |
-        const sha = '${{ steps.merge.outputs.result }}';
-        const branch = `onboarding/prereg-${Date.now()}`;
-        await github.rest.git.createRef({
-          owner: context.repo.owner,
-          repo:  context.repo.repo,
-          ref:   `refs/heads/${branch}`,
-          sha
-        });
-        core.setOutput('branch', branch);
+      - name: Create upstream branch
+        if: steps.parse.outputs.result == '5' && steps.merge.outputs.result != ''
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const sha = '${{ steps.merge.outputs.result }}';
+            const branch = `onboarding/prereg-${Date.now()}`;
+            await github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo:  context.repo.repo,
+              ref:   `refs/heads/${branch}`,
+              sha
+            });
+            core.setOutput('branch', branch);
 
     # 5.5) Commit the preregistration line on that upstream branch
-    - name: Commit preregistration.md
-      if: steps.parse.outputs.result == '5' && steps.merge.outputs.result != ''
-      uses: actions/github-script@v7
-      with:
-        script: |
-          const branch = '${{ steps.create-file.outputs.branch }}';
-          let sha = null, content = '';
-          try {
-            const f = await github.rest.repos.getContent({
+      - name: Commit preregistration.md
+        if: steps.parse.outputs.result == '5' && steps.merge.outputs.result != ''
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const branch = '${{ steps.create-file.outputs.branch }}';
+            let sha = null, content = '';
+            try {
+              const f = await github.rest.repos.getContent({
+                owner: context.repo.owner,
+                repo:  context.repo.repo,
+                path:  'preregistration.md',
+                ref:   branch
+              });
+              sha = f.data.sha;
+              content = Buffer.from(f.data.content, 'base64').toString();
+            } catch {}
+            const updated = content + `\nOnboarding preregistration completed by @${context.actor}\n`;
+            const encoded = Buffer.from(updated).toString('base64');
+            await github.rest.repos.createOrUpdateFileContents({
               owner: context.repo.owner,
               repo:  context.repo.repo,
               path:  'preregistration.md',
-              ref:   branch
+              message: 'Add preregistration onboarding line',
+              content: encoded,
+              branch,
+              sha
             });
-            sha = f.data.sha;
-            content = Buffer.from(f.data.content, 'base64').toString();
-          } catch {}
-          const updated = content + `\nOnboarding preregistration completed by @${context.actor}\n`;
-          const encoded = Buffer.from(updated).toString('base64');
-          await github.rest.repos.createOrUpdateFileContents({
-            owner: context.repo.owner,
-            repo:  context.repo.repo,
-            path:  'preregistration.md',
-            message: 'Add preregistration onboarding line',
-            content: encoded,
-            branch,
-            sha
-          });
 
     # 5.6) Open the PR in the fork, sourcing from that upstream branch
-    - name: Open PR in fork
-      if: steps.parse.outputs.result == '5' && steps.merge.outputs.result != ''
-      uses: actions/github-script@v7
-      with:
-        github-token: ${{ secrets.GH_PAT_CROSSREPO }}
-        script: |
-          const [forkOwner, forkRepo] = process.env.FORK_REPO.split('/');
-          const branch = '${{ steps.create-file.outputs.branch }}';
-          const forkDef = (await github.rest.repos.get({
-            owner: forkOwner, repo: forkRepo
-          })).data.default_branch;
-          await github.rest.pulls.create({
-            owner: forkOwner,
-            repo:  forkRepo,
-            title: 'Add preregistration line for onboarding',
-            head:  `${context.repo.owner}:${branch}`,
-            base:  forkDef,
-            maintainer_can_modify: true,
-            body:  'This PR adds a single line to preregistration.md as part of the onboarding workflow. Please review.'
-          });
+      - name: Open PR in fork
+        if: steps.parse.outputs.result == '5' && steps.merge.outputs.result != ''
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GH_PAT_CROSSREPO }}
+          script: |
+            const [forkOwner, forkRepo] = process.env.FORK_REPO.split('/');
+            const branch = '${{ steps.create-file.outputs.branch }}';
+            const forkDef = (await github.rest.repos.get({
+              owner: forkOwner, repo: forkRepo
+            })).data.default_branch;
+            await github.rest.pulls.create({
+              owner: forkOwner,
+              repo:  forkRepo,
+              title: 'Review this documentation update',
+              head:  `${context.repo.owner}:${branch}`,
+              base:  forkDef,
+              maintainer_can_modify: true,
+              body: `Time to practice code review! Please review this small change.
+
+              **Task:** Review this documentation update and approve or request changes.
+              
+              ---
+              
+              This PR adds a single line to preregistration.md as part of the onboarding process. 
+              Take a look at the changes and decide if they look good to merge.
+              
+              This is your introduction to collaborative development, reviewing others' contributions is a key skill in team projects.`
+            });
