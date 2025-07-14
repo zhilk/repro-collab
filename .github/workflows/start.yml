@@ -8,7 +8,7 @@ jobs:
   welcome:
     runs-on: ubuntu-latest
     steps:
-      - name: Welcome to the workshop, let’s get started!
+      - name: Create onboarding issue & post next-step instructions
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GH_PAT_CROSSREPO }}
@@ -59,26 +59,16 @@ jobs:
 
             // 3) Post the detailed "Next step" instructions as a comment
             const commentBody = `
-            ---
-            
-            Let’s approach this like a true scientist: step by step, with curiosity, precision, and a healthy dose of skepticism (and maybe a coffee or two). 
-            If you hit an unexpected result, remember—every great discovery started with a question. 
-            Data, documentation, and reproducibility are our friends here.
-            
-            **Next step:**  
-            Please enable “Issues” in your forked repository so we can collaborate, track your progress, and (most importantly) keep a clear record of our scientific journey.
-            
-            To enable issues:
-            
-            1. Open your repository’s **Settings**: https://github.com/REPO_NAME/settings  
-            2. Scroll down to the **Features** section.  
-            3. Check the box labeled **“Issues”**.  
-            4. When finished, reply here with `/done 3`.
-            
-            If something doesn’t match the documentation or you spot an anomaly, don’t hesitate to ask. 
-            In science, there are no silly questions, only hypotheses waiting to be tested. 
-            Let’s keep things reproducible, transparent, and maybe even a bit fun. 
-            Happy experimenting!
+            **Next step:** Please enable "Issues" in your forked repository so we can collaborate and track your progress or questions.
+
+            To enable issues in your fork:
+
+            1. Go to your **"Settings"** in your repository: https://github.com/${FORK_REPO}/settings  
+            2. Scroll down to the **"Features"** section.  
+            3. Check the box labeled **"Issues"**.  
+            4. When you’re done, reply with \`/done 3\` below.
+
+            Thank you!
             `.trim();
 
             await github.rest.issues.createComment({
