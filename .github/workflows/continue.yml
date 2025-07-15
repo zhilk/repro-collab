@@ -221,6 +221,8 @@ jobs:
     # 5.1) Verify “Create your own first issue” is closed in the fork
       - name: Verify milestone 5
         uses: actions/github-script@v7
+        env:
+          FORK_REPO: ${{ steps.vars.outputs.fork_repo }}
         with:
           github-token: ${{ secrets.GH_PAT_CROSSREPO }}
           script: |
