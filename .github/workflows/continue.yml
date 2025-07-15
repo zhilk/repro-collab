@@ -276,13 +276,128 @@ jobs:
           script: |
             const branchName = '${{ steps.verify-5.outputs.branch_name }}';
             const forkSha = '${{ steps.verify-5.outputs.fork_sha }}';
+            const { data: mainRef } = await github.rest.git.getRef({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    ref: 'heads/main'
+                  });
+            const mainSha = mainRef.object.sha;
 
             // Create branch in upstream from fork SHA
             await github.rest.git.createRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
               ref: `refs/heads/${branchName}`,
-              sha: forkSha
+              sha: mainSha
             });
 
+            // Fixed preregistration content
+            const preregistrationContent = `# Preregistration
+        
+            ## Study Overview
+            This study aims to replicate Stevens' Power Law for size perception.
+        
+            ## Hypotheses
+            We hypothesize that perceived size will follow a power function with an exponent different from 1.
+        
+            ## Methods
+            Participants will compare squares of different sizes and judge which is larger.
+        
+            ## Analysis Plan
+            We will fit a power function to the data and examine the exponent.
+        
+            ## Sample Size
+            We aim to collect data from all workshop participants.
+        
+            ---
+            Last updated: ${new Date().toISOString()}
+            `;
             
+            // Get current file SHA if it exists
+            let fileSha = null;
+            try {
+              const { data: file } = await github.rest.repos.getContent({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                path: 'preregistration.md',
+                ref: branchName
+              });
+              fileSha = file.sha;
+            } catch (e) {
+              // File doesn't exist, which is fine
+            }
+            
+            // Overwrite the file
+            await github.rest.repos.createOrUpdateFileContents({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              path: 'preregistration.md',
+              message: `Update preregistration for ${context.actor}`,
+              content: Buffer.from(preregistrationContent).toString('base64'),
+              branch: branchName,
+              sha: fileSha
+            });
+              core.setOutput('branch_name', branchName);
+
+            
+      - name: Create PR and update issue
+        if: steps.parse.outputs.result == '5' && steps.create-branch.outputs.branch_name
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GH_PAT_CROSSREPO }}
+          script: |
+            const branchName = '${{ steps.verify-5.outputs.branch_name }}';
+            const forkOwner = '${{ steps.verify-5.outputs.fork_owner }}';
+            const forkRepo = '${{ steps.verify-5.outputs.fork_repo }}';
+
+            // Get fork's default branch
+            const { data: forkData } = await github.rest.repos.get({
+              owner: forkOwner,
+              repo: forkRepo
+            });
+            const forkDefaultBranch = forkData.default_branch;
+
+            // Create PR from upstream branch to fork
+            const { data: pr } = await github.rest.pulls.create({
+              owner: forkOwner,
+              repo: forkRepo,
+              title: 'Review this preregistration update',
+              head: `${context.repo.owner}:${branchName}`,
+              base: forkDefaultBranch,
+              body: `Congratulations on completing milestone 5! 🎉
+
+              This PR updates the preregistration document. Please review this change and practice the PR review process.
+
+              **Your task:** Review this PR and either:
+              - Approve it if everything looks good
+              - Request changes if you spot any issues
+              - Add comments to discuss the changes
+              
+              Once you're satisfied, merge this PR and then run \`/done 6\` in the upstream issue.`,
+              maintainer_can_modify: true
+            });
+              
+            // Update the upstream issue checklist
+            const updatedBody = context.payload.issue.body.replace(
+              /^(\s*-\s*\[)\s\](\s*5\..*)$/m,
+              '$1x]$2'
+            ) + '\n- [ ] 6. Review and merge a PR';
+              
+            await github.rest.issues.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: updatedBody
+            });
+              
+            // Comment on the upstream issue
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `🎉 Milestone 5 complete! 
+              
+              I've created a pull request in your fork: ${pr.html_url}
+              
+              Please review and merge this PR to practice the collaborative development workflow, then run \`/done 6\` to continue.`
+            });
