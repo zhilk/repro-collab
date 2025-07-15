@@ -73,7 +73,7 @@ jobs:
             1. Open your repository's **Settings**: https://github.com/${FORK_REPO}/settings  
             2. Scroll down to the **Features** section.  
             3. Check the box labeled **“Issues”**.  
-            4. When finished, reply here with `/done 3`.
+            4. When finished, reply here with \`/done 3\`.
             
             If something doesn’t match the documentation or you spot an anomaly, don’t hesitate to ask. 
             In science, there are no silly questions, only hypotheses waiting to be tested. 
