@@ -22,6 +22,7 @@ jobs:
         run: |
           FORK_REPO="$(echo "$ISSUE_BODY" \
             | grep -oP 'Fork repo: `\K[^`]+')"
+          echo "Extracted fork repo: $FORK_REPO"
           echo "fork_repo=$FORK_REPO" >> "$GITHUB_OUTPUT"
 
       # 1) Parse the `/done N` command
