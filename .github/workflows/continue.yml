@@ -99,17 +99,9 @@ jobs:
                 body: updatedBody
               });
               
-              // 3) Celebrate in the upstream issue
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo:  context.repo.repo,
-                issue_number: context.issue.number,
-                body: '🎉 Milestone 3 complete—“Activate issues”! Milestone 4 is now available, and your first-issue template is waiting in your fork.'
-              });
-
-              // 4) Create a new issue in the fork for them to "create your own first issue"
+              // 3) Create a new issue in the fork for them to "create your own first issue"
               const onboardingUrl = context.payload.issue.html_url;
-              await github.rest.issues.create({
+              const newIssue = await github.rest.issues.create({
                 owner: owner,
                 repo:  repo,
                 title: 'Create your first issue',
@@ -125,6 +117,14 @@ jobs:
                       Feel free to add a brief introduction about yourself, what brings you to this workshop and what you're hoping to learn?
                       
                       Related: ${onboardingUrl}`
+              });
+
+              // 4) Celebrate in the upstream issue with link to new issue
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo:  context.repo.repo,
+                issue_number: context.issue.number,
+                body: `🎉 Milestone 3 complete—"Activate issues"! Milestone 4 is now available, and your first-issue template is waiting in your fork: ${newIssue.data.html_url}`
               });
             }
       - name: Verify milestone 4
