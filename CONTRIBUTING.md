@@ -60,7 +60,7 @@ We are committed to providing a welcoming and inclusive environment for all part
 Key points:
 - Be respectful and inclusive
 - Focus on constructive feedback
-- Report issues to peiker@mpib-berlin.mpg.de
+- Report issues to peikert@mpib-berlin.mpg.de
 - All community interactions are covered by this code
 
 ## Development Setup
@@ -212,7 +212,7 @@ Uses `rocker/verse:4.5.0` base image with renv for dependency management.
 
 - **Workshop Issues**: Create an issue in this repository
 - **Development Questions**: Check existing issues or create new ones
-- **Code of Conduct Issues**: Contact peiker@mpib-berlin.mpg.de
+- **Code of Conduct Issues**: Contact peikert@mpib-berlin.mpg.de
 - **General Questions**: Open a discussion
 
 ## Recognition
