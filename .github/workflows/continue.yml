@@ -218,177 +218,176 @@ jobs:
                 body: `@${context.actor}, you’ve completed step 4—feel free to close this issue now.`
               });
             }
-    # 5.1) Verify “Create your own first issue” is closed in the fork
-- name: Verify milestone 5
-  if: steps.parse.outputs.result == '5'
-  uses: actions/github-script@v7
-  env:
-    FORK_REPO: ${{ steps.vars.outputs.fork_repo }}
-  with:
-    github-token: ${{ secrets.GH_PAT_CROSSREPO }}
-    script: |
-      const [forkOwner, forkRepo] = process.env.FORK_REPO.split('/');
-      
-      // 1) First verify the "Create your own first issue" is closed
-      const { data: issues } = await github.rest.issues.listForRepo({
-        owner: forkOwner, repo: forkRepo, state: 'all', per_page: 100
-      });
-      const intro = issues.find(i =>
-        i.title.toLowerCase() === 'create your own first issue'
-      );
-      
-      if (!intro || intro.state !== 'closed') {
-        const url = intro
-          ? intro.html_url
-          : `https://github.com/${forkOwner}/${forkRepo}/issues`;
-        await github.rest.issues.createComment({
-          owner: context.repo.owner,
-          repo: context.repo.repo,
-          issue_number: context.issue.number,
-          body: `🚫 Milestone 5 not complete. Please close ["Create your own first issue"](${url}) in your fork, then run \`/done 5\` again.`
-        });
-        return; // Exit early
-      }
-      
-      // 2) Extract the fork SHA from the issue body
-      const issueBody = context.payload.issue.body;
-      const shaMatch = issueBody.match(/Fork sha:\s*`([a-f0-9]{40})`/);
-      if (!shaMatch) {
-        throw new Error('Could not find fork SHA in issue body');
-      }
-      const forkSha = shaMatch[1];
-      
-      // 3) Store branch name for next step
-      const timestamp = Date.now();
-      const branchName = `onboarding/pr-${context.actor}-${timestamp}`;
-      core.setOutput('branch_name', branchName);
-      core.setOutput('fork_sha', forkSha);
-      core.setOutput('fork_owner', forkOwner);
-      core.setOutput('fork_repo', forkRepo);
+    # 5.1) Verify "Create your own first issue" is closed in the fork
+      - name: Verify milestone 5
+        if: steps.parse.outputs.result == '5'
+        uses: actions/github-script@v7
+        env:
+          FORK_REPO: ${{ steps.vars.outputs.fork_repo }}
+        with:
+          github-token: ${{ secrets.GH_PAT_CROSSREPO }}
+          script: |
+            const [forkOwner, forkRepo] = process.env.FORK_REPO.split('/');
 
-- name: Create branch and commit with upstream permissions
-  if: steps.parse.outputs.result == '5' && steps.verify-5.outputs.branch_name
-  uses: actions/github-script@v7
-  with:
-    github-token: ${{ secrets.GH_PAT_UPSTREAM }}
-    script: |
-      const branchName = '${{ steps.verify-5.outputs.branch_name }}';
-      const forkSha = '${{ steps.verify-5.outputs.fork_sha }}';
-      
-      // Create branch in upstream from fork SHA
-      await github.rest.git.createRef({
-        owner: context.repo.owner,
-        repo: context.repo.repo,
-        ref: `refs/heads/${branchName}`,
-        sha: forkSha
-      });
-      
-      // Fixed preregistration content
-      const preregistrationContent = `# Preregistration
+            // 1) First verify the "Create your own first issue" is closed
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: forkOwner, repo: forkRepo, state: 'all', per_page: 100
+            });
+            const intro = issues.find(i =>
+              i.title.toLowerCase() === 'create your own first issue'
+            );
 
-      ## Study Overview
-      This study aims to replicate Stevens' Power Law for size perception.
+            if (!intro || intro.state !== 'closed') {
+              const url = intro
+                ? intro.html_url
+                : `https://github.com/${forkOwner}/${forkRepo}/issues`;
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: `🚫 Milestone 5 not complete. Please close ["Create your own first issue"](${url}) in your fork, then run \`/done 5\` again.`
+              });
+              return; // Exit early
+            }
 
-      ## Hypotheses
-      We hypothesize that perceived size will follow a power function with an exponent different from 1.
+            // 2) Extract the fork SHA from the issue body
+            const issueBody = context.payload.issue.body;
+            const shaMatch = issueBody.match(/Fork sha:\s*`([a-f0-9]{40})`/);
+            if (!shaMatch) {
+              throw new Error('Could not find fork SHA in issue body');
+            }
+            const forkSha = shaMatch[1];
 
-      ## Methods
-      Participants will compare squares of different sizes and judge which is larger.
+            // 3) Store branch name for next step
+            const timestamp = Date.now();
+            const branchName = `onboarding/pr-${context.actor}-${timestamp}`;
+            core.setOutput('branch_name', branchName);
+            core.setOutput('fork_sha', forkSha);
+            core.setOutput('fork_owner', forkOwner);
+            core.setOutput('fork_repo', forkRepo);
 
-      ## Analysis Plan
-      We will fit a power function to the data and examine the exponent.
+      - name: Create branch and commit with upstream permissions
+        if: steps.parse.outputs.result == '5' && steps.verify-5.outputs.branch_name
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GH_PAT_UPSTREAM }}
+          script: |
+            const branchName = '${{ steps.verify-5.outputs.branch_name }}';
+            const forkSha = '${{ steps.verify-5.outputs.fork_sha }}';
 
-      ## Sample Size
-      We aim to collect data from all workshop participants.
+            // Create branch in upstream from fork SHA
+            await github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: `refs/heads/${branchName}`,
+              sha: forkSha
+            });
 
-      ---
-      Last updated: ${new Date().toISOString()}
-      `;
-      
-      // Get current file SHA if it exists
-      let fileSha = null;
-      try {
-        const { data: file } = await github.rest.repos.getContent({
-          owner: context.repo.owner,
-          repo: context.repo.repo,
-          path: 'preregistration.md',
-          ref: branchName
-        });
-        fileSha = file.sha;
-      } catch (e) {
-        // File doesn't exist, which is fine
-      }
-      
-      // Overwrite the file
-      await github.rest.repos.createOrUpdateFileContents({
-        owner: context.repo.owner,
-        repo: context.repo.repo,
-        path: 'preregistration.md',
-        message: `Update preregistration for ${context.actor}`,
-        content: Buffer.from(preregistrationContent).toString('base64'),
-        branch: branchName,
-        sha: fileSha
-      });
-
-- name: Create PR and update issue
-  if: steps.parse.outputs.result == '5' && steps.verify-5.outputs.branch_name
-  uses: actions/github-script@v7
-  with:
-    github-token: ${{ secrets.GH_PAT_CROSSREPO }}
-    script: |
-      const branchName = '${{ steps.verify-5.outputs.branch_name }}';
-      const forkOwner = '${{ steps.verify-5.outputs.fork_owner }}';
-      const forkRepo = '${{ steps.verify-5.outputs.fork_repo }}';
-      
-      // Get fork's default branch
-      const { data: forkData } = await github.rest.repos.get({
-        owner: forkOwner,
-        repo: forkRepo
-      });
-      const forkDefaultBranch = forkData.default_branch;
-      
-      // Create PR from upstream branch to fork
-      const { data: pr } = await github.rest.pulls.create({
-        owner: forkOwner,
-        repo: forkRepo,
-        title: 'Review this preregistration update',
-        head: `${context.repo.owner}:${branchName}`,
-        base: forkDefaultBranch,
-        body: `Congratulations on completing milestone 5! 🎉
+            // Fixed preregistration content
+            const preregistrationContent = `# Preregistration
         
-        This PR updates the preregistration document. Please review this change and practice the PR review process.
+            ## Study Overview
+            This study aims to replicate Stevens' Power Law for size perception.
         
-        **Your task:** Review this PR and either:
-        - Approve it if everything looks good
-        - Request changes if you spot any issues
-        - Add comments to discuss the changes
+            ## Hypotheses
+            We hypothesize that perceived size will follow a power function with an exponent different from 1.
         
-        Once you're satisfied, merge this PR and then run \`/done 6\` in the upstream issue.`,
-        maintainer_can_modify: true
-      });
-      
-      // Update the upstream issue checklist
-      const updatedBody = context.payload.issue.body.replace(
-        /^(\s*-\s*\[)\s\](\s*5\..*)$/m,
-        '$1x]$2'
-      ) + '\n- [ ] 6. Review and merge a PR';
-      
-      await github.rest.issues.update({
-        owner: context.repo.owner,
-        repo: context.repo.repo,
-        issue_number: context.issue.number,
-        body: updatedBody
-      });
-      
-      // Comment on the upstream issue
-      await github.rest.issues.createComment({
-        owner: context.repo.owner,
-        repo: context.repo.repo,
-        issue_number: context.issue.number,
-        body: `🎉 Milestone 5 complete! 
+            ## Methods
+            Participants will compare squares of different sizes and judge which is larger.
         
-        I've created a pull request in your fork: ${pr.html_url}
+            ## Analysis Plan
+            We will fit a power function to the data and examine the exponent.
         
-        Please review and merge this PR to practice the collaborative development workflow, then run \`/done 6\` to continue.`
-      });
-      
+            ## Sample Size
+            We aim to collect data from all workshop participants.
+        
+            ---
+            Last updated: ${new Date().toISOString()}
+            `;
+            
+            // Get current file SHA if it exists
+            let fileSha = null;
+            try {
+              const { data: file } = await github.rest.repos.getContent({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                path: 'preregistration.md',
+                ref: branchName
+              });
+              fileSha = file.sha;
+            } catch (e) {
+              // File doesn't exist, which is fine
+            }
+            
+            // Overwrite the file
+            await github.rest.repos.createOrUpdateFileContents({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              path: 'preregistration.md',
+              message: `Update preregistration for ${context.actor}`,
+              content: Buffer.from(preregistrationContent).toString('base64'),
+              branch: branchName,
+              sha: fileSha
+            });
+            
+      - name: Create PR and update issue
+        if: steps.parse.outputs.result == '5' && steps.verify-5.outputs.branch_name
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GH_PAT_CROSSREPO }}
+          script: |
+            const branchName = '${{ steps.verify-5.outputs.branch_name }}';
+            const forkOwner = '${{ steps.verify-5.outputs.fork_owner }}';
+            const forkRepo = '${{ steps.verify-5.outputs.fork_repo }}';
+
+            // Get fork's default branch
+            const { data: forkData } = await github.rest.repos.get({
+              owner: forkOwner,
+              repo: forkRepo
+            });
+            const forkDefaultBranch = forkData.default_branch;
+
+            // Create PR from upstream branch to fork
+            const { data: pr } = await github.rest.pulls.create({
+              owner: forkOwner,
+              repo: forkRepo,
+              title: 'Review this preregistration update',
+              head: `${context.repo.owner}:${branchName}`,
+              base: forkDefaultBranch,
+              body: `Congratulations on completing milestone 5! 🎉
+
+              This PR updates the preregistration document. Please review this change and practice the PR review process.
+
+              **Your task:** Review this PR and either:
+              - Approve it if everything looks good
+              - Request changes if you spot any issues
+              - Add comments to discuss the changes
+              
+              Once you're satisfied, merge this PR and then run \`/done 6\` in the upstream issue.`,
+              maintainer_can_modify: true
+            });
+              
+            // Update the upstream issue checklist
+            const updatedBody = context.payload.issue.body.replace(
+              /^(\s*-\s*\[)\s\](\s*5\..*)$/m,
+              '$1x]$2'
+            ) + '\n- [ ] 6. Review and merge a PR';
+              
+            await github.rest.issues.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: updatedBody
+            });
+              
+            // Comment on the upstream issue
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `🎉 Milestone 5 complete! 
+              
+              I've created a pull request in your fork: ${pr.html_url}
+              
+              Please review and merge this PR to practice the collaborative development workflow, then run \`/done 6\` to continue.`
+            });
