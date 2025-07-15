@@ -105,7 +105,7 @@ jobs:
               const newIssue = await github.rest.issues.create({
                 owner: owner,
                 repo:  repo,
-                title: 'Create your first issue',
+                title: 'Create your own first issue',
                 body: `Great work on enabling issues! Now create your first one.
 
                       **Task:** Create a new issue in this repository titled "introduction needed"
