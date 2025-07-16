@@ -58,6 +58,9 @@ jobs:
             });
 
             // 3) Post the detailed "Next step" instructions as a comment
+
+            ![issue gif](https://github.com/HannesDiemerling/repro-collab/blob/main/gifs/activate_issue.gif)
+            
             const commentBody = `
             ---
             
