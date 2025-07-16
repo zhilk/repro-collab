@@ -108,19 +108,19 @@ jobs:
                 title: 'Create your own first issue',
                 body: `Great work on enabling issues! Now create your first one.
 
-                      **Task:** Create a new issue in this repository titled "introduction needed"
+                **Task:** Create a new issue in this repository titled "introduction needed"
 
-                      <img src="https://raw.githubusercontent.com/HannesDiemerling/repro-collab/main/gifs/make_issue.gif" alt="Make Issues GIF">
-          
-                      
-                      ---
-                      
-                      This helps you practice the basics of issue creation. 
-                      Go to the Issues tab, click "New Issue", and use that exact title. 
-                      
-                      Feel free to add a brief introduction about yourself, what brings you to this workshop and what you're hoping to learn?
-                      
-                      Related: ${onboardingUrl}`
+                <img src="https://raw.githubusercontent.com/HannesDiemerling/repro-collab/main/gifs/make_issue.gif" alt="Make Issues GIF">
+    
+                
+                ---
+                
+                This helps you practice the basics of issue creation. 
+                Go to the Issues tab, click "New Issue", and use that exact title. 
+                
+                Feel free to add a brief introduction about yourself, what brings you to this workshop and what you're hoping to learn?
+                
+                Related: ${onboardingUrl}`
               });
 
               // 4) Celebrate in the upstream issue with link to new issue
