@@ -358,7 +358,6 @@ jobs:
             });
               core.setOutput('branch_name', branchName);
 
-            onboard
       - name: Create PR and update issue
         if: steps.parse.outputs.result == '5' && steps.create-branch.outputs.branch_name
         uses: actions/github-script@v7
