@@ -47,7 +47,7 @@ jobs:
             - [x] 2. Fork GitHub repo
             - [ ] 3. Activate issues in your fork
 
-            <img src="https://github.com/HannesDiemerling/repro-collab/blob/main/gifs/activate_issue.gif" alt="Activate Issues GIF" width="600">
+            <img src="https://raw.githubusercontent.com/HannesDiemerling/repro-collab/main/gifs/activate_issue.gif" alt="Activate Issues GIF">
             
             `.trim();
 
