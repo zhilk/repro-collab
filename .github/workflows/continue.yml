@@ -109,6 +109,9 @@ jobs:
                 body: `Great work on enabling issues! Now create your first one.
 
                       **Task:** Create a new issue in this repository titled "introduction needed"
+
+                      <img src="https://raw.githubusercontent.com/HannesDiemerling/repro-collab/main/gifs/make_issue.gif" alt="Make Issues GIF">
+          
                       
                       ---
                       
