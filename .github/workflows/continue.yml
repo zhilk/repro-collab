@@ -84,15 +84,10 @@ jobs:
               });
             } else {
               // 1) Cross off milestone 3 in the upstream issue body
-              let updatedBody = context.payload.issue.body.replace(
-                // match only the checkbox for "3."
-                /^(\s*-\s*\[)\s\](\s*3\..*)$/m,
-                '$1x]$2'
-              );
+              let updatedBody = context.payload.issue.body
+                .replace(/^(\s*-\s*\[)\s\](\s*3\..*)$/m, '$1x]$2')
+                .replace(/(\n*<img)/, '\n- [ ] 4. Create an issue$1');
               
-              // 2) Reveal milestone 4 in that same list
-              updatedBody += '\n- [ ] 4. Create an issue';
-
               await github.rest.issues.update({
                 owner: context.repo.owner,
                 repo:  context.repo.repo,
@@ -194,10 +189,8 @@ jobs:
 
             // 5) Cross off “4.”, reveal “5.”
             const updated = context.payload.issue.body
-              .replace(
-                /^(\s*-\s*\[)\s\](\s*4\..*)$/m,
-                '$1x]$2'
-              ) + '\n- [ ] 5. Close an issue';
+              .replace(/^(\s*-\s*\[)\s\](\s*4\..*)$/m, '$1x]$2')
+              .replace(/(\n*<img)/, '\n- [ ] 5. Close an issue$1');
 
             await github.rest.issues.update({
               owner: context.repo.owner,
@@ -400,16 +393,15 @@ jobs:
             });
               
             // Update the upstream issue checklist
-            const updatedBody = context.payload.issue.body.replace(
-              /^(\s*-\s*\[)\s\](\s*5\..*)$/m,
-              '$1x]$2'
-            ) + '\n- [ ] 6. Review and merge a PR';
+            const updatedBody5 = context.payload.issue.body
+                .replace(/^(\s*-\s*\[)\s\](\s*5\..*)$/m, '$1x]$2')
+                .replace(/(\n*<img)/, '\n- [ ] 6. Review and merge a PR$1');
               
             await github.rest.issues.update({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: updatedBody
+              body: updatedBody5
             });
               
             // Comment on the upstream issue
