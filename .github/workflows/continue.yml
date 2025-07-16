@@ -102,7 +102,7 @@ jobs:
               
               // 3) Create a new issue in the fork for them to "create your own first issue"
               const onboardingUrl = context.payload.issue.html_url;
-              const bodyLines = [
+              const issueBodyLines = [
                 'Great work on enabling issues! Now create your first one.',
                 '',
                 '**Task:** Create a new issue in this repository titled "introduction needed"',
@@ -124,11 +124,11 @@ jobs:
                 owner: owner,
                 repo:  repo,
                 title: 'Create your own first issue',
-                body: bodyLines.join('\n')
+                body: issueBodyLines.join('\n')
               });
 
               // 4) Celebrate in the upstream issue with link to new issue
-              const bodyLines = [
+              const milestone3BodyLines = [
                 '🎉 Milestone 3 complete - "Activate issues"!',
                 '',
                 `**Task:** Milestone 4 is now available, and your first-issue template is waiting in your fork, look into it: ${newIssue.data.html_url}`,
@@ -137,7 +137,7 @@ jobs:
                 owner: context.repo.owner,
                 repo:  context.repo.repo,
                 issue_number: context.issue.number,
-                body: bodyLines.join('\n')
+                body: milestone3BodyLines.join('\n')
               });
             }
       - name: Verify milestone 4
@@ -216,7 +216,7 @@ jobs:
               i.title.toLowerCase() === 'create your own first issue'
             );
             const firstIssueUrl = firstIssue.html_url;
-            const bodyLines = [
+            const milestone4BodyLines = [
               '🎉 Milestone 4 complete - "Open a issue"!',
               '',
               `**Task:** Milestone 5 is now available, go back to your first Issue read the new comment: ${firstIssueUrl}`,
@@ -225,7 +225,7 @@ jobs:
               owner: context.repo.owner,
               repo:  context.repo.repo,
               issue_number: context.issue.number,
-              body: bodyLines.join('\n')
+              body: milestone4BodyLines.join('\n')
             });
 
             // 7) Notify the "Create your own first issue" in the fork
