@@ -59,8 +59,6 @@ jobs:
 
             // 3) Post the detailed "Next step" instructions as a comment
 
-            ![Image](https://github.com/HannesDiemerling/repro-collab/blob/main/gifs/activate_issue.gif)
-            ---
             
             const commentBody = `
             ---
@@ -83,6 +81,8 @@ jobs:
             In science, there are no silly questions, only hypotheses waiting to be tested. 
             Let’s keep things reproducible, transparent, and maybe even a bit fun. 
             Happy experimenting!
+
+            ![Image](https://github.com/HannesDiemerling/repro-collab/blob/main/gifs/activate_issue.gif)
             `.trim();
 
             await github.rest.issues.createComment({
