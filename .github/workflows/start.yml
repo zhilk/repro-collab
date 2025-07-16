@@ -59,7 +59,7 @@ jobs:
 
             // 3) Post the detailed "Next step" instructions as a comment
 
-            <img src="https://github.com/HannesDiemerling/repro-collab/blob/main/gifs/activate_issue.gif" alt="issue GIF">
+            ![Image](https://github.com/HannesDiemerling/repro-collab/blob/main/gifs/activate_issue.gif)
             
             const commentBody = `
             ---
