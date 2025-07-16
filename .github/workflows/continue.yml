@@ -107,6 +107,8 @@ jobs:
                 '',
                 '**Task:** Create a new issue in this repository titled "introduction needed"',
                 '',
+                '**Next:** Comment `/done 4` here: ${context.payload.issue.html_url}',
+                '',
                 '<img src="https://raw.githubusercontent.com/HannesDiemerling/repro-collab/main/gifs/make_issue.gif" alt="Make Issues GIF">',
                 '',
                 '---',
@@ -118,7 +120,7 @@ jobs:
                 '',
                 `Related: ${onboardingUrl}`
               ];
-              
+
               const newIssue = await github.rest.issues.create({
                 owner: owner,
                 repo:  repo,
