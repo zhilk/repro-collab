@@ -46,6 +46,9 @@ jobs:
             - [x] 1. Created GitHub account
             - [x] 2. Fork GitHub repo
             - [ ] 3. Activate issues in your fork
+
+            <img src="https://github.com/HannesDiemerling/repro-collab/blob/main/gifs/activate_issue.gif" alt="Activate Issues GIF" width="600">
+            
             `.trim();
 
             // 2) Create the issue
@@ -82,7 +85,6 @@ jobs:
             Let’s keep things reproducible, transparent, and maybe even a bit fun. 
             Happy experimenting!
 
-            ![Image](https://github.com/HannesDiemerling/repro-collab/blob/main/gifs/activate_issue.gif)
             `.trim();
 
             await github.rest.issues.createComment({
