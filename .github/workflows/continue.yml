@@ -102,25 +102,28 @@ jobs:
               
               // 3) Create a new issue in the fork for them to "create your own first issue"
               const onboardingUrl = context.payload.issue.html_url;
+              const bodyLines = [
+                'Great work on enabling issues! Now create your first one.',
+                '',
+                '**Task:** Create a new issue in this repository titled "introduction needed"',
+                '',
+                '<img src="https://raw.githubusercontent.com/HannesDiemerling/repro-collab/main/gifs/make_issue.gif" alt="Make Issues GIF">',
+                '',
+                '---',
+                '',
+                'This helps you practice the basics of issue creation.',
+                'Go to the Issues tab, click "New Issue", and use that exact title.',
+                '',
+                'Feel free to add a brief introduction about yourself, what brings you to this workshop and what you\'re hoping to learn?',
+                '',
+                `Related: ${onboardingUrl}`
+              ];
+              
               const newIssue = await github.rest.issues.create({
                 owner: owner,
                 repo:  repo,
                 title: 'Create your own first issue',
-                body: `Great work on enabling issues! Now create your first one.
-
-**Task:** Create a new issue in this repository titled "introduction needed"
-
-<img src="https://raw.githubusercontent.com/HannesDiemerling/repro-collab/main/gifs/make_issue.gif" alt="Make Issues GIF">
-
-
----
-
-This helps you practice the basics of issue creation. 
-Go to the Issues tab, click "New Issue", and use that exact title. 
-
-Feel free to add a brief introduction about yourself, what brings you to this workshop and what you're hoping to learn?
-
-Related: ${onboardingUrl}`
+                body: bodyLines.join('\n')
               });
 
               // 4) Celebrate in the upstream issue with link to new issue
@@ -296,25 +299,25 @@ Related: ${onboardingUrl}`
 
             // Fixed preregistration content
             const preregistrationContent = `# Preregistration
-
-## Study Overview
-This study aims to replicate Stevens' Power Law for size perception.
-
-## Hypotheses
-We hypothesize that perceived size will follow a power function with an exponent different from 1.
-
-## Methods
-Participants will compare squares of different sizes and judge which is larger.
-
-## Analysis Plan
-We will fit a power function to the data and examine the exponent.
-
-## Sample Size
-We aim to collect data from all workshop participants.
-
----
-Last updated: ${new Date().toISOString()}
-`;
+        
+            ## Study Overview
+            This study aims to replicate Stevens' Power Law for size perception.
+        
+            ## Hypotheses
+            We hypothesize that perceived size will follow a power function with an exponent different from 1.
+        
+            ## Methods
+            Participants will compare squares of different sizes and judge which is larger.
+        
+            ## Analysis Plan
+            We will fit a power function to the data and examine the exponent.
+        
+            ## Sample Size
+            We aim to collect data from all workshop participants.
+        
+            ---
+            Last updated: ${new Date().toISOString()}
+            `;
             
             // Get current file SHA if it exists
             let fileSha = null;
