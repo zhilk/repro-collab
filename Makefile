@@ -10,9 +10,8 @@ publish/:
 	mkdir -p $@
 	cp -r $^ $@
 
-publish/:  self-paced/
+publish/:  self-paced/ assets/
 
 self-paced/: self-paced-source/ renv
 	Rscript -e "bookdown::render_book('self-paced-source')"
-
 
