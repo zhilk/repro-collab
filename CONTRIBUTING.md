@@ -48,6 +48,10 @@ You need **two different GitHub PATs** with specific permissions:
 In your fork, got to Actions and activate Actions.
 There are a couple maintainance actions that use time based triggers, if you want those you have to activate them seperately.
 
+#### Activate GitHub Pages
+
+You need to run the action `publish.yml` and activate GitHub Pages.
+
 ## License
 
 This project is released under the **CC0 1.0 Universal** license, which means it is dedicated to the public domain. You can:
