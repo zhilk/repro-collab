@@ -84,15 +84,12 @@ jobs:
               });
             } else {
               // 1) Cross off milestone 3 in the upstream issue body
-              let updatedBody = context.payload.issue.body.replace(
-                // match only the checkbox for "3."
-                /^(\s*-\s*\[)\s\](\s*3\..*)$/m,
-                '$1x]$2'
-              );
-              
-              // 2) Reveal milestone 4 in that same list
-              updatedBody += '\n- [ ] 4. Create an issue';
+              let updatedBody = context.payload.issue.body
+                .replace(/^(\s*-\s*\[)\s\](\s*3\..*)$/m, '$1x]$2')
+                .replace(/\n*<img[^>]*>.*$/m, '\n- [ ] 4. Create an issue');
 
+                //.replace(/\n*<img[^>]*>.*$/m, `\n- [ ] 4. Create an issue\n\n<img src="https://raw.githubusercontent.com/${context.repo.owner}/${context.repo.repo}/main/gifs/create_issue.gif" alt="Create Issue GIF">`);
+              
               await github.rest.issues.update({
                 owner: context.repo.owner,
                 repo:  context.repo.repo,
@@ -102,30 +99,42 @@ jobs:
               
               // 3) Create a new issue in the fork for them to "create your own first issue"
               const onboardingUrl = context.payload.issue.html_url;
+              const issueBodyLines = [
+                'Great work on enabling issues! Now create your first one.',
+                '',
+                '**Task:** Create a new issue in this repository titled "introduction needed"',
+                '',
+                `**Afterwards:** Comment \`/done 4\` here: ${onboardingUrl}`,
+                '',
+                '---',
+                '',
+                'This helps you practice the basics of issue creation.',
+                'Go to the Issues tab, click "New Issue", and use that exact title.',
+                '',
+                'Feel free to add a brief introduction about yourself, what brings you to this workshop and what you\'re hoping to learn?',
+                '',
+                '',
+                `<img src="https://raw.githubusercontent.com/${context.repo.owner}/${context.repo.repo}/main/gifs/make_issue.gif" alt="Make Issues GIF">`,
+              ];
+
               const newIssue = await github.rest.issues.create({
                 owner: owner,
                 repo:  repo,
                 title: 'Create your own first issue',
-                body: `Great work on enabling issues! Now create your first one.
-
-                      **Task:** Create a new issue in this repository titled "introduction needed"
-                      
-                      ---
-                      
-                      This helps you practice the basics of issue creation. 
-                      Go to the Issues tab, click "New Issue", and use that exact title. 
-                      
-                      Feel free to add a brief introduction about yourself, what brings you to this workshop and what you're hoping to learn?
-                      
-                      Related: ${onboardingUrl}`
+                body: issueBodyLines.join('\n')
               });
 
               // 4) Celebrate in the upstream issue with link to new issue
+              const milestone3BodyLines = [
+                '🎉 Milestone 3 complete - "Activate issues"!',
+                '',
+                `**Task:** Milestone 4 is now available, and your first-issue template is waiting in your fork, look into it: ${newIssue.data.html_url}`,
+              ];
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo:  context.repo.repo,
                 issue_number: context.issue.number,
-                body: `🎉 Milestone 3 complete—"Activate issues"! Milestone 4 is now available, and your first-issue template is waiting in your fork: ${newIssue.data.html_url}`
+                body: milestone3BodyLines.join('\n')
               });
             }
       - name: Verify milestone 4
@@ -182,10 +191,10 @@ jobs:
 
             // 5) Cross off “4.”, reveal “5.”
             const updated = context.payload.issue.body
-              .replace(
-                /^(\s*-\s*\[)\s\](\s*4\..*)$/m,
-                '$1x]$2'
-              ) + '\n- [ ] 5. Close an issue';
+              .replace(/^(\s*-\s*\[)\s\](\s*4\..*)$/m, '$1x]$2')
+              + '\n- [ ] 5. Close an issue';
+              
+              //.replace(/\n*<img[^>]*>.*$/m, `\n- [ ] 5. Close an issue\n\n<img src="https://raw.githubusercontent.com/${context.repo.owner}/${context.repo.repo}/main/gifs/close_issue.gif" alt="Close Issue GIF">`);
 
             await github.rest.issues.update({
               owner: context.repo.owner,
@@ -195,14 +204,6 @@ jobs:
             });
 
             // 6) Celebrate
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo:  context.repo.repo,
-              issue_number: context.issue.number,
-              body: '🎉 Milestone 4 complete! Next up: milestone 5.'
-            });
-
-            // 7) Notify the "Create your own first issue" in the fork
             const forkIssues = await github.rest.issues.listForRepo({
               owner, repo,
               state: 'open',
@@ -211,11 +212,26 @@ jobs:
             const firstIssue = forkIssues.data.find(i =>
               i.title.toLowerCase() === 'create your own first issue'
             );
+            const firstIssueUrl = firstIssue.html_url;
+            const milestone4BodyLines = [
+              '🎉 Milestone 4 complete - "Open a issue"!',
+              '',
+              `**Task:** Milestone 5 is now available, go back to your first Issue read the new comment: ${firstIssueUrl}`,
+            ];
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo:  context.repo.repo,
+              issue_number: context.issue.number,
+              body: milestone4BodyLines.join('\n')
+            });
+
+            // 7) Notify the "Create your own first issue" in the fork
+            const onboardingUrl = context.payload.issue.html_url;
             if (firstIssue) {
               await github.rest.issues.createComment({
                 owner, repo,
                 issue_number: firstIssue.number,
-                body: `@${context.actor}, you’ve completed step 4—feel free to close this issue now.`
+                body: `@${context.actor}, you’ve completed step 4, now close this issue and comment \`/done 5\` here: ${onboardingUrl}!`
               });
             }
     # 5.1) Verify "Create your own first issue" is closed in the fork
@@ -292,26 +308,29 @@ jobs:
             });
 
             // Fixed preregistration content
-            const preregistrationContent = `# Preregistration
-        
-            ## Study Overview
-            This study aims to replicate Stevens' Power Law for size perception.
-        
-            ## Hypotheses
-            We hypothesize that perceived size will follow a power function with an exponent different from 1.
-        
-            ## Methods
-            Participants will compare squares of different sizes and judge which is larger.
-        
-            ## Analysis Plan
-            We will fit a power function to the data and examine the exponent.
-        
-            ## Sample Size
-            We aim to collect data from all workshop participants.
-        
-            ---
-            Last updated: ${new Date().toISOString()}
-            `;
+            const preregistrationLines = [
+              '# Preregistration',
+              '',
+              '## Study Overview',
+              'This study aims to replicate Stevens\' Power Law for size perception.',
+              '',
+              '## Hypotheses',
+              'We hypothesize that perceived size will follow a power function with an exponent different from 1.',
+              '',
+              '## Methods',
+              'Participants will compare squares of different sizes and judge which is larger.',
+              '',
+              '## Analysis Plan',
+              'We will fit a power function to the data and examine the exponent.',
+              '',
+              '## Sample Size',
+              'We aim to collect data from all workshop participants.',
+              '',
+              '---',
+              `Last updated: ${new Date().toISOString()}`
+            ];
+            const preregistrationContent = preregistrationLines.join('\n');
+            
             
             // Get current file SHA if it exists
             let fileSha = null;
@@ -339,7 +358,6 @@ jobs:
             });
               core.setOutput('branch_name', branchName);
 
-            
       - name: Create PR and update issue
         if: steps.parse.outputs.result == '5' && steps.create-branch.outputs.branch_name
         uses: actions/github-script@v7
@@ -373,21 +391,22 @@ jobs:
               - Request changes if you spot any issues
               - Add comments to discuss the changes
               
-              Once you're satisfied, merge this PR and then run \`/done 6\` in the upstream issue.`,
+              Once you're satisfied, merge this PR and then run \`/done 6\` in the original repository`,
               maintainer_can_modify: true
             });
               
             // Update the upstream issue checklist
-            const updatedBody = context.payload.issue.body.replace(
-              /^(\s*-\s*\[)\s\](\s*5\..*)$/m,
-              '$1x]$2'
-            ) + '\n- [ ] 6. Review and merge a PR';
+            const updatedBody5 = context.payload.issue.body
+                .replace(/^(\s*-\s*\[)\s\](\s*5\..*)$/m, '$1x]$2')
+                + '\n- [ ] 6. Review and merge a PR';
+
+                //.replace(/\n*<img[^>]*>.*$/m, `\n- [ ] 6. Review and merge a PR\n\n<img src="https://raw.githubusercontent.com/${context.repo.owner}/${context.repo.repo}/main/gifs/review_pr.gif" alt="Review PR GIF">`);
               
             await github.rest.issues.update({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: updatedBody
+              body: updatedBody5
             });
               
             // Comment on the upstream issue

@@ -46,6 +46,9 @@ jobs:
             - [x] 1. Created GitHub account
             - [x] 2. Fork GitHub repo
             - [ ] 3. Activate issues in your fork
+
+            <img src="https://raw.githubusercontent.com/HannesDiemerling/repro-collab/main/gifs/activate_issue.gif" alt="Activate Issues GIF">
+            
             `.trim();
 
             // 2) Create the issue
@@ -58,6 +61,8 @@ jobs:
             });
 
             // 3) Post the detailed "Next step" instructions as a comment
+
+            
             const commentBody = `
             ---
             
@@ -79,6 +84,7 @@ jobs:
             In science, there are no silly questions, only hypotheses waiting to be tested. 
             Let’s keep things reproducible, transparent, and maybe even a bit fun. 
             Happy experimenting!
+
             `.trim();
 
             await github.rest.issues.createComment({
