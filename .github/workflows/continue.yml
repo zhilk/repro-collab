@@ -569,12 +569,13 @@ jobs:
               return;
             }
             
-            if (!ourPr.merged) {
+            //Hotfix, check if closed for robustness
+            if (ourPr.state !== 'closed') {
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: context.issue.number,
-                body: `🚫 Milestone 7 not complete. Please merge the pull request: ${ourPr.html_url}. Make sure all checks have passed, then click "Merge pull request" and run \`/done 7\` again.`
+                body: `🚫 Milestone 7 not complete. Please merge or close the pull request: ${ourPr.html_url}. Make sure all checks have passed, then click "Merge pull request" and run \`/done 7\` again.`
               });
               return;
             }
@@ -604,7 +605,7 @@ jobs:
               '',
               '---',
               '',
-              '🧍 **Stand up and move to the marked corner.**',
+              '**Task**: Stand up and move to the marked corner.',
               '',
               '➡️ Form a line along the tape.',
               '➡️ Talk to your neighbors.',
@@ -612,11 +613,6 @@ jobs:
               '➡️ Line up: **left = least**, **right = most**.',
               '➡️ Adjust until the full line is correct.',
               '➡️ Ask instructors if unsure.',
-              '',
-              '---',
-              '',
-              '✅ This issue is now closed.',
-              '🚀 Happy collaborating!'
             ];
 
             await github.rest.issues.createComment({
