@@ -384,11 +384,13 @@ jobs:
               '',
               '**Task:**',
               'Go to the "Files changed" tab of this PR and add a suggestion for improvement.',
-              '- Add a new point **2. Reproducibility:** (as a new section or bullet point) to the preregistration.',
+              '- Modify content in Hypotheses to an exponent of 2.',
               '',
               '> *Hint: To add a suggestion, click the "+" symbol next to a line, type your improved text in a suggestion block, and submit the comment.*',
               '',
               `After adding your suggestion, return to ${context.payload.issue.html_url} and comment \`/done 6\` to continue.`
+              '',
+              '<img src="https://raw.githubusercontent.com/HannesDiemerling/repro-collab/main/gifs/make_suggestion.gif" alt="Make Suggestion GIF">',
             ];
 
             // Create PR from upstream branch to fork
