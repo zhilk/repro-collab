@@ -554,18 +554,6 @@ jobs:
               sort: 'created',
               direction: 'desc'
             });
-
-            console.log(
-              "Alle PRs:",
-              prs.map(pr => ({
-                number: pr.number,
-                title: pr.title,
-                state: pr.state,
-                html_url: pr.html_url,
-                // meistens undefined, siehe oben:
-                merged: pr.merged
-              }))
-            );
             
             const ourPr = prs.find(pr =>
               pr.title === 'Review this preregistration update'
@@ -600,15 +588,14 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: updatedBody,
-              state: 'closed'
+              body: updatedBody
             });
             
             // Final success comment
             const workshopCompleteLines = [
               `🎉 **Congratulations @${context.actor}!** 🎉`,
               '',
-              'You completed all key steps of Part 1!',
+              'You completed all key steps of Part one of this Workshop!',
               '',
               'You\'ve mastered:',
               '- ✅ Forking repositories',
