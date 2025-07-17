@@ -375,6 +375,23 @@ jobs:
             });
             const forkDefaultBranch = forkData.default_branch;
 
+            // Comment on the upstream issue
+            const milestone5BodyLines = [
+              '🎉 Milestone 5 complete - "Close an issue"!',
+              '',
+              `**Task:** Milestone 6 is now available. Review the pull request (PR) I created in your fork: ${pr.html_url}`,
+              '',
+              'Add a suggestion to improve the code using GitHub\'s suggestion feature, more detail in our PR.',
+              '',
+              `Once you've added your suggestion, comment \`/done 6\` back here.`
+            ];
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: milestone5BodyLines.join('\n')
+            });
+
             // Create PR from upstream branch to fork
             const { data: pr } = await github.rest.pulls.create({
               owner: forkOwner,
@@ -382,23 +399,14 @@ jobs:
               title: 'Review this preregistration update',
               head: `${context.repo.owner}:${branchName}`,
               base: forkDefaultBranch,
-              body: `Congratulations on completing milestone 5! 🎉
-
-              This PR updates the preregistration document. Please review this change and practice the PR review process.
-
-              **Your task:** Review this PR and either:
-              - Approve it if everything looks good
-              - Request changes if you spot any issues
-              - Add comments to discuss the changes
-              
-              Once you're satisfied, merge this PR and then run \`/done 6\` in the original repository`,
+              body: prBodyLines.join('\n'),
               maintainer_can_modify: true
             });
               
             // Update the upstream issue checklist
             const updatedBody5 = context.payload.issue.body
                 .replace(/^(\s*-\s*\[)\s\](\s*5\..*)$/m, '$1x]$2')
-                + '\n- [ ] 6. Review and merge a PR';
+                + '\n- [ ] 6. Add a suggestion to the PR';
 
                 //.replace(/\n*<img[^>]*>.*$/m, '\n- [ ] 6. Review and merge a PR\n\n<img src="https://raw.githubusercontent.com/HannesDiemerling/repro-collab/main/gifs/review_pr.gif" alt="Review PR GIF">');
               
@@ -408,15 +416,215 @@ jobs:
               issue_number: context.issue.number,
               body: updatedBody5
             });
+
+            
+            // Also comment in the PR to guide the user
+            const prCommentLines = [
+              `Welcome @${context.actor}! This PR was created for your learning journey.`,
+              '',
+              '**Your next task:** Add a suggestion to this PR',
+              '',
+              'DUMMY TEXT - FÜLLE HIER AUS',
+              '',
+              `After adding your suggestion, go back to the main issue and comment \`/done 6\`: ${context.payload.issue.html_url}`
+            ];
+            await github.rest.issues.createComment({
+              owner: forkOwner,
+              repo: forkRepo,
+              issue_number: pr.number,
+              body: prCommentLines.join('\n')
+            });
+
+      - name: Add a PR Suggestion
+        if: steps.parse.outputs.result == '6'
+        uses: actions/github-script@v7
+        env:
+          FORK_REPO: ${{ steps.vars.outputs.fork_repo }}
+        with:
+          github-token: ${{ secrets.GH_PAT_CROSSREPO }}
+          script: |
+            const [owner, repo] = process.env.FORK_REPO.split('/');
+            
+            // Find the PR we created
+            const { data: prs } = await github.rest.pulls.list({
+              owner, repo,
+              state: 'all',
+              per_page: 20,
+              sort: 'created',
+              direction: 'desc'
+            });
+            
+            const ourPr = prs.find(pr => 
+              pr.title === 'Review this preregistration update' &&
+              pr.user.login === 'github-actions[bot]'
+            );
+            
+            if (!ourPr) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: '🚫 Could not find the PR. Please check your fork for the preregistration PR.'
+              });
+              return;
+            }
+            
+            // Check for review comments with suggestions
+            const { data: reviews } = await github.rest.pulls.listReviews({
+              owner, repo,
+              pull_number: ourPr.number
+            });
+            
+            let hasSuggestion = false;
+            for (const review of reviews) {
+              const { data: comments } = await github.rest.pulls.listCommentsForReview({
+                owner, repo,
+                pull_number: ourPr.number,
+                review_id: review.id
+              });
               
-            // Comment on the upstream issue
+              if (comments.some(c => c.body.includes('```suggestion'))) {
+                hasSuggestion = true;
+                break;
+              }
+            }
+            
+            // Also check single comments
+            if (!hasSuggestion) {
+              const { data: prComments } = await github.rest.pulls.listReviewComments({
+                owner, repo,
+                pull_number: ourPr.number
+              });
+              
+              hasSuggestion = prComments.some(c => c.body.includes('```suggestion'));
+            }
+            
+            if (!hasSuggestion) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: `🚫 Milestone 6 not complete. Please add a suggestion to the PR using GitHub's suggestion feature. Go to the "Files changed" tab in your PR: ${ourPr.html_url}, click on a line and add a suggestion, then run \`/done 6\` again.`
+              });
+              return;
+            }
+            
+            // Update issue body
+            const updatedBody = context.payload.issue.body
+              .replace(/^(\s*-\s*\[)\s\](\s*6\..*)$/m, '$1x]$2')
+              + '\n- [ ] 7. Merge the pull request';
+            
+            await github.rest.issues.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: updatedBody
+            });
+            
+            // Success comment
+            const milestone6BodyLines = [
+              '🎉 Milestone 6 complete - "Add a PR suggestion"!',
+              '',
+              `**Task:** Milestone 7 is now available. Time to merge your pull request: ${ourPr.html_url}`,
+              '',
+              'Click the "Merge pull request" button to complete the PR workflow.',
+              '',
+              `**Afterwards**: comment \`/done 7\` here.`
+            ];
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: `🎉 Milestone 5 complete! 
-              
-              I've created a pull request in your fork: ${pr.html_url}
-              
-              Please review and merge this PR to practice the collaborative development workflow, then run \`/done 6\` to continue.`
+              body: milestone6BodyLines.join('\n')
+            });
+
+      - name: Merge PR
+        if: steps.parse.outputs.result == '7'
+        uses: actions/github-script@v7
+        env:
+          FORK_REPO: ${{ steps.vars.outputs.fork_repo }}
+        with:
+          github-token: ${{ secrets.GH_PAT_CROSSREPO }}
+          script: |
+            const [owner, repo] = process.env.FORK_REPO.split('/');
+            
+            // Find the PR we created
+            const { data: prs } = await github.rest.pulls.list({
+              owner, repo,
+              state: 'all',
+              per_page: 20,
+              sort: 'created',
+              direction: 'desc'
+            });
+            
+            const ourPr = prs.find(pr => 
+              pr.title === 'Review this preregistration update' &&
+              pr.user.login === 'github-actions[bot]'
+            );
+            
+            if (!ourPr) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: '🚫 Could not find the PR. Please check your fork for the preregistration PR.'
+              });
+              return;
+            }
+            
+            if (!ourPr.merged) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: `🚫 Milestone 7 not complete. Please merge the pull request: ${ourPr.html_url}. Make sure all checks have passed, then click "Merge pull request" and run \`/done 7\` again.`
+              });
+              return;
+            }
+            
+            // Update issue body - mark 7 as complete
+            const updatedBody = context.payload.issue.body
+              .replace(/^(\s*-\s*\[)\s\](\s*7\..*)$/m, '$1x]$2');
+            
+            await github.rest.issues.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: updatedBody,
+              state: 'closed'
+            });
+            
+            // Final success comment
+            const workshopCompleteLines = [
+              `🎉 **Congratulations @${context.actor}!** 🎉`,
+              '',
+              'You completed all key steps of Part 1!',
+              '',
+              'You\'ve mastered:',
+              '- ✅ Forking repositories',
+              '- ✅ Handling issues',
+              '- ✅ Reviewing & merging PRs',
+              '',
+              '---',
+              '',
+              '🧍 **Stand up and move to the marked corner.**',
+              '',
+              '➡️ Form a line along the tape.',
+              '➡️ Talk to your neighbors.',
+              '➡️ Ask how much GitHub experience they have.',
+              '➡️ Line up: **left = least**, **right = most**.',
+              '➡️ Adjust until the full line is correct.',
+              '➡️ Ask instructors if unsure.',
+              '',
+              '---',
+              '',
+              '✅ This issue is now closed.',
+              '🚀 Happy collaborating!'
+            ];
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: workshopCompleteLines.join('\n')
             });
