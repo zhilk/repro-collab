@@ -114,7 +114,7 @@ jobs:
                 'Feel free to add a brief introduction about yourself, what brings you to this workshop and what you\'re hoping to learn?',
                 '',
                 '',
-                `<img src="https://${context.repo.owner}.github.io/${context.repo.repo}/assets/make_issue.gif" alt="Make Issues GIF">`,
+                `<img src="https://${context.repo.owner}.github.io/${context.repo.repo}/assets/create_issue.gif" alt="Make Issues GIF">`,
               ];
 
               const newIssue = await github.rest.issues.create({
