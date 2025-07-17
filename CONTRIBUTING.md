@@ -32,7 +32,7 @@ You need **two different GitHub PATs** with specific permissions:
 - **Target**: Your forked repository
 - **Required Permissions**:
   - **Read access**: actions, commit statuses, metadata, pull requests
-  - **Read and Write access**: code, contents, issues
+  - **Read and Write access**: contents, issues
 - **Purpose**: Allows the workshop automation to manage the workflow within your forked repository
 
 #### Setting up PATs
