@@ -554,6 +554,18 @@ jobs:
               sort: 'created',
               direction: 'desc'
             });
+
+            console.log(
+              "Alle PRs:",
+              prs.map(pr => ({
+                number: pr.number,
+                title: pr.title,
+                state: pr.state,
+                html_url: pr.html_url,
+                // meistens undefined, siehe oben:
+                merged: pr.merged
+              }))
+            );
             
             const ourPr = prs.find(pr =>
               pr.title === 'Review this preregistration update'
