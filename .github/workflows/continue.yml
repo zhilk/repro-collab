@@ -88,7 +88,7 @@ jobs:
                 .replace(/^(\s*-\s*\[)\s\](\s*3\..*)$/m, '$1x]$2')
                 .replace(/\n*<img[^>]*>.*$/m, '\n- [ ] 4. Create an issue');
 
-                //.replace(/\n*<img[^>]*>.*$/m, '\n- [ ] 4. Create an issue\n\n<img src="https://raw.githubusercontent.com/HannesDiemerling/repro-collab/main/gifs/create_issue.gif" alt="Create Issue GIF">');
+                //.replace(/\n*<img[^>]*>.*$/m, `\n- [ ] 4. Create an issue\n\n<img src="https://raw.githubusercontent.com/${context.repo.owner}/${context.repo.repo}/main/gifs/create_issue.gif" alt="Create Issue GIF">`);
               
               await github.rest.issues.update({
                 owner: context.repo.owner,
@@ -114,7 +114,7 @@ jobs:
                 'Feel free to add a brief introduction about yourself, what brings you to this workshop and what you\'re hoping to learn?',
                 '',
                 '',
-                '<img src="https://raw.githubusercontent.com/HannesDiemerling/repro-collab/main/gifs/make_issue.gif" alt="Make Issues GIF">',
+                `<img src="https://raw.githubusercontent.com/${context.repo.owner}/${context.repo.repo}/main/gifs/make_issue.gif" alt="Make Issues GIF">`,
               ];
 
               const newIssue = await github.rest.issues.create({
@@ -194,7 +194,7 @@ jobs:
               .replace(/^(\s*-\s*\[)\s\](\s*4\..*)$/m, '$1x]$2')
               + '\n- [ ] 5. Close an issue';
               
-              //.replace(/\n*<img[^>]*>.*$/m, '\n- [ ] 5. Close an issue\n\n<img src="https://raw.githubusercontent.com/HannesDiemerling/repro-collab/main/gifs/close_issue.gif" alt="Close Issue GIF">');
+              //.replace(/\n*<img[^>]*>.*$/m, `\n- [ ] 5. Close an issue\n\n<img src="https://raw.githubusercontent.com/${context.repo.owner}/${context.repo.repo}/main/gifs/close_issue.gif" alt="Close Issue GIF">`);
 
             await github.rest.issues.update({
               owner: context.repo.owner,
@@ -400,7 +400,7 @@ jobs:
                 .replace(/^(\s*-\s*\[)\s\](\s*5\..*)$/m, '$1x]$2')
                 + '\n- [ ] 6. Review and merge a PR';
 
-                //.replace(/\n*<img[^>]*>.*$/m, '\n- [ ] 6. Review and merge a PR\n\n<img src="https://raw.githubusercontent.com/HannesDiemerling/repro-collab/main/gifs/review_pr.gif" alt="Review PR GIF">');
+                //.replace(/\n*<img[^>]*>.*$/m, `\n- [ ] 6. Review and merge a PR\n\n<img src="https://raw.githubusercontent.com/${context.repo.owner}/${context.repo.repo}/main/gifs/review_pr.gif" alt="Review PR GIF">`);
               
             await github.rest.issues.update({
               owner: context.repo.owner,
