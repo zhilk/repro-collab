@@ -2,6 +2,7 @@ on:
   push:
     paths:
         - self-paced-source/**
+        - assets/
     branches: main
   registry_package:
     types: [published, updated]
