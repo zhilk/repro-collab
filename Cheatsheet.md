@@ -1,6 +1,7 @@
-### Cheats Sheet: Collaborative Writing on GitHub
+### Cheat Sheet: Collaborative Writing on GitHub
 
-**Repository**: The central project folder in GitHub that stores all files, version history, and collaboration tools (like issues, pull requests, and branches).
+**Repository**: The central project folder in GitHub.
+It stores all files, version history, and collaboration tools (like issues, pull requests, and branches).
 In collaborative writing, the repository is like your shared document workspace. 
 
 **Fork**: A personal copy of a repository, saved under your own GitHub account.
