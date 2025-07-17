@@ -502,7 +502,7 @@ jobs:
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: context.issue.number,
-                body: `🚫 Milestone 6 not complete. Please add a suggestion to the PR using GitHub's suggestion feature. Go to the "Files changed" tab in your PR: ${ourPr.html_url}, click on a line and add a suggestion, then run \`/done 6\` again.`
+                body: `🚫 Milestone 6 not complete. Please add a suggestion to the PR using GitHub's suggestion feature. Go to the "Files changed" tab in your PR: ${pr.html_url}, click on a line and add a suggestion, then run \`/done 6\` again.`
               });
               return;
             }
@@ -523,7 +523,7 @@ jobs:
             const milestone6BodyLines = [
               '🎉 Milestone 6 complete - "Add a PR suggestion"!',
               '',
-              `**Task:** Milestone 7 is now available. Time to merge your pull request: ${ourPr.html_url}`,
+              `**Task:** Milestone 7 is now available. Time to merge your pull request: ${pr.html_url}`,
               '',
               'Click the "Merge pull request" button to complete the PR workflow.',
               '',
@@ -535,7 +535,7 @@ jobs:
               issue_number: context.issue.number,
               body: milestone6BodyLines.join('\n')
             });
-
+ 
       - name: Merge PR
         if: steps.parse.outputs.result == '7'
         uses: actions/github-script@v7
