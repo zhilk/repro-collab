@@ -375,23 +375,6 @@ jobs:
             });
             const forkDefaultBranch = forkData.default_branch;
 
-            // Comment on the upstream issue
-            const milestone5BodyLines = [
-              '🎉 Milestone 5 complete - "Close an issue"!',
-              '',
-              `**Task:** Milestone 6 is now available. Review the pull request (PR) I created in your fork: ${pr.html_url}`,
-              '',
-              'Add a suggestion to improve the code using GitHub\'s suggestion feature, more detail in our PR.',
-              '',
-              `Once you've added your suggestion, comment \`/done 6\` back here.`
-            ];
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-              body: milestone5BodyLines.join('\n')
-            });
-
             // Create PR from upstream branch to fork
             const { data: pr } = await github.rest.pulls.create({
               owner: forkOwner,
@@ -417,6 +400,22 @@ jobs:
               body: updatedBody5
             });
 
+            // Comment on the upstream issue
+            const milestone5BodyLines = [
+              '🎉 Milestone 5 complete - "Close an issue"!',
+              '',
+              `**Task:** Milestone 6 is now available. Review the pull request (PR) I created in your fork: ${pr.html_url}`,
+              '',
+              'Add a suggestion to improve the code using GitHub\'s suggestion feature, more detail in our PR.',
+              '',
+              `Once you've added your suggestion, comment \`/done 6\` back here.`
+            ];
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: milestone5BodyLines.join('\n')
+            });
             
             // Also comment in the PR to guide the user
             const prCommentLines = [
