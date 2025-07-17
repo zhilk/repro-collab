@@ -433,22 +433,6 @@ jobs:
               body: milestone5BodyLines.join('\n')
             });
             
-            // Also comment in the PR to guide the user
-            const prCommentLines = [
-              `Welcome @${context.actor}! This PR was created for your learning journey.`,
-              '',
-              '**Your next task:** Add a suggestion to this PR',
-              '',
-              'DUMMY TEXT - FÜLLE HIER AUS',
-              '',
-              `After adding your suggestion, go back to the main issue and comment \`/done 6\`: ${context.payload.issue.html_url}`
-            ];
-            await github.rest.issues.createComment({
-              owner: forkOwner,
-              repo: forkRepo,
-              issue_number: pr.number,
-              body: prCommentLines.join('\n')
-            });
 
       - name: Add a PR Suggestion
         if: steps.parse.outputs.result == '6'
@@ -469,12 +453,11 @@ jobs:
               direction: 'desc'
             });
             
-            const ourPr = prs.find(pr => 
-              pr.title === 'Review this preregistration update' &&
-              pr.user.login === 'github-actions[bot]'
+            const pr = prs.find(pr =>
+              pr.title === 'Review this preregistration update'
             );
             
-            if (!ourPr) {
+            if (!pr) {
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
@@ -487,14 +470,14 @@ jobs:
             // Check for review comments with suggestions
             const { data: reviews } = await github.rest.pulls.listReviews({
               owner, repo,
-              pull_number: ourPr.number
+              pull_number: pr.number
             });
             
             let hasSuggestion = false;
             for (const review of reviews) {
               const { data: comments } = await github.rest.pulls.listCommentsForReview({
                 owner, repo,
-                pull_number: ourPr.number,
+                pull_number: pr.number,
                 review_id: review.id
               });
               
@@ -508,7 +491,7 @@ jobs:
             if (!hasSuggestion) {
               const { data: prComments } = await github.rest.pulls.listReviewComments({
                 owner, repo,
-                pull_number: ourPr.number
+                pull_number: pr.number
               });
               
               hasSuggestion = prComments.some(c => c.body.includes('```suggestion'));
@@ -572,9 +555,8 @@ jobs:
               direction: 'desc'
             });
             
-            const ourPr = prs.find(pr => 
-              pr.title === 'Review this preregistration update' &&
-              pr.user.login === 'github-actions[bot]'
+            const ourPr = prs.find(pr =>
+              pr.title === 'Review this preregistration update'
             );
             
             if (!ourPr) {
