@@ -33,17 +33,17 @@ Szene: Your supervisor did something, you review it.
 
 ## Milestone V
 
-* U: close issue "Create your own first issue"
+* U: close issue "Create your own first issue" ☑️
 * C: react to issue called "preregistrations needed" by creating PR that proposes the changes.
 
 ## Milestone VI
 
-* C: GIF how to suggest changes.
-* C: Check that they made a suggestion.
+* C: GIF how to suggest changes. ☑️
+* C: Check that they made a suggestion. ☑️
 
 ## Milestone VII
 
-* U: Merges the pull request (perhaps with applied changes).
+* U: Merges the pull request (perhaps with applied changes). ☑️
 * C: check that they have the file preregistration.md in their main.
 
 ## Milestone VIII
@@ -60,6 +60,7 @@ Szene: Your supervisor did something, you review it.
 ## Milestone X
 
 * C: create a bunch of issues for the pairs to solve in preregistration.md
+* I: reiterate permissions of forking, show them how to use github.dev online editor
 * U: devide and solve the issues without creating a giant mess
 * Together, edit the preregistration draft in this fork, making meaningful commits and following the collaborative writing 
 
