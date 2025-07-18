@@ -1,6 +1,6 @@
 FROM rocker/verse:4.5.0
 WORKDIR /home/rstudio
-RUN apt-get update -y && apt-get install -y rsync
+RUN apt-get update -y && apt-get install -y rsync libarchive-dev
 RUN mkdir -p renv
 COPY renv.lock /home/rstudio/renv.lock
 COPY .Rprofile /home/rstudio/.Rprofile
