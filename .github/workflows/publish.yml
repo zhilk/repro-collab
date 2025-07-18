@@ -3,6 +3,8 @@ on:
     paths:
         - self-paced-source/**
         - assets/
+        - Makefile
+        - .github/workflows/publish.yml
     branches: main
   registry_package:
     types: [published, updated]
