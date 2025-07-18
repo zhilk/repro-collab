@@ -10,11 +10,11 @@ publish/:
 	mkdir -p $@
 	cp -r $^ $@
 
-publish/:  self-paced/ assets/ shiny/
+publish/:  self-paced/ assets/ steven/
 
 self-paced/: self-paced-source/ renv
 	Rscript -e "bookdown::render_book('self-paced-source')"
 
-shiny/: steven/app.R renv
-	Rscript -e "shinylive::export(appdir = 'steven', destdir = 'shiny')"
+steven/: steven-source/app.R renv
+	Rscript -e "shinylive::export(appdir = 'steven-source', destdir = 'steven')"
 

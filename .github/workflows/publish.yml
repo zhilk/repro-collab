@@ -3,7 +3,7 @@ on:
     paths:
         - self-paced-source/**
         - assets/
-        - steven/
+        - steven-source/
         - Makefile
         - .github/workflows/publish.yml
     branches: main
