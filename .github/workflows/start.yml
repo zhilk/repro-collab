@@ -45,16 +45,19 @@ jobs:
             
             Currently, you are in an *issue*, which is a way to track tasks, ideas, or bugs within a specific repository. 
             Throughout the workshop, we use this issue to track your progress. 
-            Every time you reply with \`/done NUMBER\` this list gets updated:
+            Every time you reply with \`/done NUMBER\`, the list below gets updated.
+
+            **Note**: Please complete the tasks in your forked repository, but always return to this issue in the original workshop repository to indicate that you’re done. 
+            
+            *Why?* This is due to the technical setup of the workshop. You’re working in your fork, but the issue that tracks your progress is in the original repository. 
+            Since you don’t have write access there, you cannot edit the issue directly (for example, by checking checkboxes). We'll provide links along the way that lead to the correct places to make your life easier. 
+
 
             - [x] 1. Created GitHub account
             - [x] 2. Fork GitHub repo
             - [ ] 3. Activate issues in your fork
 
-            **Note**: Please complete the tasks in your forked repository, but always return to this issue in the original workshop repository to indicate that you’re done. 
-            
-            *Why?* This is due to the technical setup of the workshop. You’re working in your fork, but the issue that tracks your progress is in the original repository. Since you don’t have write access there, you cannot edit the issue directly (for example, by checking checkboxes).
-
+          
             <img src="https://${context.repo.owner}.github.io/${context.repo.repo}/assets/activate_issue.gif" alt="Activate Issues GIF">
             
             `.trim();
