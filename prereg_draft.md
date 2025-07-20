@@ -29,8 +29,8 @@ Participants will judge whether the comparison stimulus appears larger or smalle
 
 A total of 39 different comparison stimuli will be used, ranging in area from 8.00 sq.mm to 15.00 sq.mm. 
 Stimuli will be presented in random order. 
-Each participant will provide 200 judgements for all stimulus difference close to equality, 100 for stimulus differences of intermediate value, and 50 for the largest values of stimulus difference.  
-Experimental sessions will last one hour, during which approximately 200 judgements will be obtained. 
+Each participant will provide 200 judgements for all stimulus difference close to equality, 100 for stimulus differences of intermediate value, and 50 for the largest values of stimulus difference.
+Experimental sessions will last one hour, during which approximately 200 judgements will be obtained.
 Each participant will provide approximately 6,850 judgements.
 
 Participants will be instructed to respond as quickly as possible once they are confident in their judgment, but stimuli will remain visible until a decision is made. 
