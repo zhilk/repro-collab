@@ -232,10 +232,7 @@ jobs:
               await github.rest.issues.createComment({
                 owner, repo,
                 issue_number: firstIssue.number,
-                body: `@${context.actor}, you’ve completed step 4! 
-                Now please close this issue as we're moving to the next part of the workshop where you'll work on the preregistration.
-                Closing issues when they're no longer needed is good practice for keeping your repository tidy.
-                After you've closed the issue, comment \`/done 5\` here: ${preregistrationUrl}!`
+                body: `@${context.actor}, you’ve completed step 4, now close this issue and comment \`/done 5\` here: ${preregistrationUrl}!`
               });
             }
     # 5.1) Verify "Create your own first issue" is closed in the fork
