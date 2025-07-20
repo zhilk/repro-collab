@@ -108,11 +108,7 @@ jobs:
                 '- Go to the *Issues* tab.', 
                 '- Click *New Issue*.', 
                 '- Use this exact title: *Preregistration needed*.', 
-                'Add a brief introduction about yourself, what brings you to this workshop and what you\'re hoping to learn.',
-                '', 
-                `**Afterwards:** Return to this issue and comment \`/done 4\` here: ${preregistrationUrl}`,
-                '',
-                `<img src="https://${context.repo.owner}.github.io/${context.repo.repo}/assets/create_issue.gif" alt="Make Issues GIF">`,
+      
               ];
 
               const newIssue = await github.rest.issues.create({
