@@ -100,17 +100,16 @@ jobs:
               // 3) Create a new issue in the fork for them to "create your own first issue"
               const preregistrationUrl = context.payload.issue.html_url;
               const issueBodyLines = [
-                'Great work on enabling issues! Now create your first one.',
+                '*Great work on enabling issues! Now create your first one.*',
                 'In collaborative writing projects on GitHub, issues are the central way to coordinate work and communicate with your collaborators.', 
-                'For example, you may want to create an issue to remind yourself (and your collaborators) that your project does not yet have a preregistration.',
+                'For example, you might want to create an issue to remind yourself (and your collaborators) that your project does not yet have a preregistration.',
                 '', 
-                '**Task:** To practice the basics of issue creation, create a new issue in this repository titled "Preregistration needed"',
-                '- Go to the Issues tab', 
-                '- Click "New Issue"', 
-                '- Use that exact title (Preregistration needed)', 
-                '- Add a brief introduction about yourself, what brings you to this workshop and what you\'re hoping to learn', 
-                '',
-                `**Afterwards:** Come back to this issues and comment \`/done 4\` here: ${preregistrationUrl}`,
+                '**Task:** Let's practice creating a new issue in your repository!',
+                '- Go to the *Issues* tab.', 
+                '- Click *New Issue*.', 
+                '- Use that exact this title: *Preregistration needed*.', 
+                '- Add a brief introduction about yourself, what brings you to this workshop and what you\'re hoping to learn.', 
+                '- **Afterwards:** Return to this issues and comment \`/done 4\` here: ${preregistrationUrl}`,
                 '', 
                 `<img src="https://${context.repo.owner}.github.io/${context.repo.repo}/assets/create_issue.gif" alt="Make Issues GIF">`,
               ];
@@ -233,7 +232,10 @@ jobs:
               await github.rest.issues.createComment({
                 owner, repo,
                 issue_number: firstIssue.number,
-                body: `@${context.actor}, you’ve completed step 4, now close this issue and comment \`/done 5\` here: ${preregistrationUrl}!`
+                body: `@${context.actor}, you’ve completed step 4! 
+                Now please close this issue as we're moving to the next part of the workshop where you'll work on the preregistration.
+                Closing issues when they're no longer needed is good practice for keeping your repository tidy.
+                After you've closed the issue, comment \`/done 5\` here: ${preregistrationUrl}!`
               });
             }
     # 5.1) Verify "Create your own first issue" is closed in the fork
