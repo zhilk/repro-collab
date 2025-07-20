@@ -100,14 +100,21 @@ jobs:
               // 3) Create a new issue in the fork for them to "create your own first issue"
               const preregistrationUrl = context.payload.issue.html_url;
               const issueBodyLines = [
-                '*Great work on enabling issues! Now create your first one.*',
-                'In collaborative writing projects on GitHub, issues are the central way to coordinate work and communicate with your collaborators.', 
-                'For example, you might want to create an issue to remind yourself (and your collaborators) that your project does not yet have a preregistration.',
-                '', 
-                '**Task:** Let's practice creating a new issue in your repository!',
-                '- Go to the *Issues* tab.', 
-                '- Click *New Issue*.', 
-                '- Use this exact title: *Preregistration needed*.', 
+                'Great work on enabling issues! Now create your first one.',
+                '',
+                '**Task:** Create a new issue in this repository titled "Preregistration needed"',
+                '',
+                `**Afterwards:** Comment \`/done 4\` here: ${preregistrationUrl}`,
+                '',
+                '---',
+                '',
+                'This helps you practice the basics of issue creation.',
+                'Go to the Issues tab, click "New Issue", and use that exact title.',
+                '',
+                'Feel free to add a brief introduction about yourself, what brings you to this workshop and what you\'re hoping to learn?',
+                '',
+                '',
+                `<img src="https://${context.repo.owner}.github.io/${context.repo.repo}/assets/create_issue.gif" alt="Make Issues GIF">`,
               ];
 
               const newIssue = await github.rest.issues.create({
