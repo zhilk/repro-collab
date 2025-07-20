@@ -108,7 +108,6 @@ jobs:
                 '- Go to the *Issues* tab.', 
                 '- Click *New Issue*.', 
                 '- Use this exact title: *Preregistration needed*.', 
-      
               ];
 
               const newIssue = await github.rest.issues.create({
