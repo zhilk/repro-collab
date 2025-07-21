@@ -713,7 +713,7 @@ jobs:
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: context.issue.number,
-                body: '🚫 Milestone 9 not complete. Please create a "Data" folder in the fork and upload at least 2 data files (e.g., .csv, .txt, or .json files) generated from the Shiny app. Then run `/done 9` again.'
+                body: '🚫 Milestone 9 not complete. Please create a "Data" folder in the fork and upload at least 2 data files generated from the Shiny app. Then run `/done 9` again.'
               });
               return;
             }
