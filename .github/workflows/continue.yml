@@ -95,7 +95,8 @@ jobs:
                 owner: context.repo.owner,
                 repo:  context.repo.repo,
                 issue_number: context.issue.number,
-                body: updatedBody
+                body: updatedBody,
+                state: 'open'
               });
               
               // 3) Create a new issue in the fork for them to "create your own first issue"
@@ -203,7 +204,8 @@ jobs:
               owner: context.repo.owner,
               repo:  context.repo.repo,
               issue_number: context.issue.number,
-              body: updated
+              body: updated,
+              state: 'open'
             });
 
             // 6) Celebrate
@@ -397,7 +399,8 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: updatedBody5
+              body: updatedBody5,
+              state: 'open'
             });
 
             // Comment on the upstream issue
@@ -500,7 +503,8 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: updatedBody6
+              body: updatedBody6,
+              state: 'open'
             });
             
             // Success comment
@@ -573,7 +577,8 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: updatedBody7
+              body: updatedBody7,
+              state: 'open'
             });
             
             // Final success comment
@@ -627,7 +632,8 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: updatedBody8
+              body: updatedBody8,
+              state: 'open'
             });
             
             // Success comment
@@ -721,7 +727,8 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: updatedBody9
+              body: updatedBody9,
+              state: 'open'
             });
             
             // 4) Success comment
@@ -842,7 +849,8 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: updatedBody10
+              body: updatedBody10,
+              state: 'open'
             });
             
             // Final success comment
@@ -909,68 +917,26 @@ jobs:
               owner, repo,
               title: 'Generate and upload research data',
               body: [
-                '## 👥 Partner Task: Generate synthetic data together',
+                '## 👥 Partner Task: Generate and upload synthetic data',
                 '',
-                'This task requires both partners to work together!',
+                '### Step 1: Generate Data',
+                'Visit: [link] and generate data together (recommended: 20 trials)',
                 '',
-                '### Step 1: Access the Shiny App',
-                'Visit the data generation app: [link will be provided by workshop facilitators]',
+                '### Step 2: Upload to GitHub',
+                '**Upload to the less experienced partner\'s fork:**',
                 '',
-                '### Step 2: Generate Data',
-                '**Together, decide on:**',
-                '- Sample size (recommended: 100-500)',
-                '- Number of variables',
-                '- Effect sizes',
-                '- Any other parameters the app offers',
+                '1. Navigate to your fork on GitHub',
+                '2. Create/navigate to `Data/` folder (if it doesn\'t exist yet)',
+                '3. Upload your generated data file(s)',
+                '4. Commit,
                 '',
-                '### Step 3: Download Generated Data',
-                'The app should provide at least 2 files:',
-                '- The main dataset (e.g., `experiment_data.csv`)',
-                '- A metadata or codebook file (e.g., `data_description.txt`)',
-                '',
-                '### Step 4: Upload to GitHub',
-                '**Important:** Upload to the **less experienced** partner\'s fork only!',
-                '',
-                '**How to upload files to GitHub:**',
-                '',
-                '1. **Navigate to your fork** on GitHub',
-                '2. **Create a new folder called "Data":**',
-                '   - Click "Create new file"',
-                '   - Type `Data/` (the slash creates a folder)',
-                '   - Type a temporary filename like `README.md`',
-                '   - Scroll down and click "Commit new file"',
-                '',
-                '3. **Upload your data files:**',
-                '   - Navigate into the Data folder',
-                '   - Click "Add file" → "Upload files"',
-                '   - Drag and drop or choose your generated data files',
-                '   - Add commit message: "Add generated research data"',
-                '   - Click "Commit changes"',
-                '',
-                '**Alternative method (using Git):**',
-                '```bash',
-                'git clone https://github.com/[your-username]/[repo-name].git',
-                'cd [repo-name]',
-                'mkdir Data',
-                'cp /path/to/generated/files Data/',
-                'git add Data/*',
-                'git commit -m "Add generated research data"',
-                'git push',
-                '```',
-                '',
-                '### Step 5: Verify and Continue',
-                '**After uploading**, the less experienced partner should:',
-                `- Return to the main workshop issue: ${preregistrationUrl}`,
-                '- Comment `/done 9`',
+                '### Step 3: Mark Complete',
+                `Return to: ${preregistrationUrl} and comment \`/done 9\``,
                 '',
                 '---',
                 '',
-                '💡 **Tips:**',
-                '- Make sure both partners contribute (e.g., one generates, one uploads)',
-                '- Keep your data files reasonably sized (< 10MB each)',
-                '- Use descriptive filenames',
+                '📋 **Alternative upload methods & help:** [GitHub Upload Cheat Sheet](https://docs.github.com/en/repositories/working-with-files/managing-files/adding-a-file-to-a-repository)',
                 '',
-                'Need help? Ask your partner or the workshop facilitators!'
               ].join('\n')
             });
             
