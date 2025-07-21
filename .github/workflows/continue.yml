@@ -30,6 +30,7 @@ jobs:
         id: parse
         uses: actions/github-script@v7
         with:
+          github-token: ${{ secrets.GH_PAT_CROSSREPO }}
           result-encoding: string
           script: |
             // 1) Grab body and regex all numbered tasks
