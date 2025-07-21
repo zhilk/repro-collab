@@ -595,38 +595,36 @@ jobs:
               body: updatedBody
             });
             
-            // Final success comment
-            const workshopCompleteLines = [
-              `🎉 **Congratulations @${context.actor}!** 🎉`,
-              '',
-              'You completed everything you can do alone:',
-              '',
-              'You\'ve mastered:',
-              '- ✅ Forking repositories',
-              '- ✅ Handling issues',
-              '- ✅ Reviewing & merging PRs',
-              '',
-              'Now you need a partner. The goal of the next task is to find a partner with a different experience level.',
-              '',
-              '---',
-              '',
-              '**Task**: Stand up and move to the marked corner.',
-              '',
-              '1. ➡️ Form a line.',
-              '2. ➡️ Discuss with your neighbor the following questions:',
-              '    * What makes an ideal issue?',
-              '    * How can issues be used to organize tasks and responsibilities?',
-              '    * Imagine you want to give feedback to your student, collaborator, etc. how do usually provide it? How could you use GitHub?',
-              '    * What can you use PRs for?',
-              '    * What aspects of your workflow are difficult to translate to GitHub?',
-              '3. ➡️ When you are done with the discussion, move down to the other end of the line and chose a partner',
-              '4. ➡️ Participate in their discussion till the time is up.',
-              '<img src="https://${context.repo.owner}.github.io/${context.repo.repo}/assets/pair-finding.svg" alt="Visual explanation of the partner finding exercise.">',
-            ];
-
+            const workshopCompleteBody = `
+            🎉 **Congratulations @${context.actor}!** 🎉
+            
+            You completed everything you can do alone:
+            
+            You've mastered:
+            - ✅ Forking repositories
+            - ✅ Handling issues
+            - ✅ Reviewing & merging PRs
+            
+            Now you need a partner. The goal of the next task is to find a partner with a different experience level.
+            
+            ---
+            
+            **Task**: Stand up and move to the marked corner.
+            
+            1. ➡️ Form a line.
+            2. ➡️ Discuss with your neighbor the following questions:
+                * What makes an ideal issue?
+                * How can issues be used to organize tasks and responsibilities?
+                * Imagine you want to give feedback to your student, collaborator, etc. how do usually provide it? How could you             use GitHub?
+                * What can you use PRs for?
+                * What aspects of your workflow are difficult to translate to GitHub?
+            3. ➡️ When you are done with the discussion, move down to the other end of the line and chose a partner
+            4. ➡️ Participate in their discussion till the time is up.
+            <img src="https://${context.repo.owner}.github.io/${context.repo.repo}/assets/pair-finding.svg" alt="Visual             explanation of the partner finding exercise.">`;
+            
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: workshopCompleteLines.join('\n')
+              body: workshopCompleteBody
             });

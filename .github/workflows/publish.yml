@@ -2,8 +2,8 @@ on:
   push:
     paths:
         - self-paced-source/**
-        - assets/
-        - steven-source/
+        - assets/**
+        - steven-source/**
         - Makefile
         - .github/workflows/publish.yml
     branches: main
