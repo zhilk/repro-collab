@@ -102,18 +102,19 @@ jobs:
               const preregistrationUrl = context.payload.issue.html_url;
               const issueBodyLines = [
                 'Great work on enabling issues! Now create your first one.',
+                '', 
+                'In collaborative writing projects on GitHub, issues are the central way to coordinate work and communicate with your collaborators.', 
+                'For example, you might want to create an issue to remind yourself (and your collaborators) that your project doesn\'t yet have a preregistration.',
+                '', 
+                'In issues (as in many GitHub tools), text is formatted in Markdown. Markdown lets you write plain text while adding simple symbols to control formatting, such as **bold**, *italics*, or headings.',
+                'You can find an overview of Markdown formatting options [here](https://media.datacamp.com/legacy/image/upload/v1697797990/Marketing/Blog/Markdown_Cheat_Sheet.pdf).',
                 '',
-                '**Task:** Create a new issue in this repository titled "Preregistration needed"',
-                '',
-                `**Afterwards:** Comment \`/done 4\` here: ${preregistrationUrl}`,
-                '',
-                '---',
-                '',
-                'This helps you practice the basics of issue creation.',
-                'Go to the Issues tab, click "New Issue", and use that exact title.',
-                '',
-                'Feel free to add a brief introduction about yourself, what brings you to this workshop and what you\'re hoping to learn?',
-                '',
+                '**Task:** Create a new issue in your repository!',
+                '- Go to the **Issues** tab.', 
+                '- Click **New Issue**.', 
+                '- Use this exact title: **Preregistration needed**.', 
+                '- Add a brief introduction about yourself, what brings you to this workshop and what you\'re hoping to learn. Make sure to try different Markdown formatting options!', 
+                `- **Afterwards:** Return to this issues and comment \`/done 4\` here: ${preregistrationUrl}`,
                 '',
                 `<img src="https://${context.repo.owner}.github.io/${context.repo.repo}/assets/create_issue.gif" alt="Make Issues GIF">`,
               ];
@@ -236,7 +237,11 @@ jobs:
               await github.rest.issues.createComment({
                 owner, repo,
                 issue_number: firstIssue.number,
-                body: `@${context.actor}, you’ve completed step 4, now close this issue and comment \`/done 5\` here: ${preregistrationUrl}!`
+                body: `@${context.actor}, you\’ve completed milestone 4!  
+                Imagine your collaborators saw your reminder and quickly put together a first draft of the preregistration (how efficient!).
+                In the next part of the workshop, you will help refine this preregistration.  
+                But first, close the issue you are currently in as we won\'t need it anymore. Closing issues when they are are no longer needed is good practice for keeping your repository organized.  
+                After you\'ve closed the issue, comment \`/done 5\` here: ${preregistrationUrl}!`
               });
             }
     # 5.1) Verify "Create your own first issue" is closed in the fork
@@ -362,15 +367,30 @@ jobs:
             const forkDefaultBranch = forkData.default_branch;
 
             const prBodyLines = [
-              '## :eyes: Review Instructions',
+              '### Congratulations on completing milestone 5!',
               '',
-              '**Task:**',
-              'Go to the "Files changed" tab of this PR and add a suggestion for improvement.',
-              '- Modify content in Hypotheses to an exponent of 2.',
-              '',
-              '> *Hint: To add a suggestion, click the "+" symbol next to a line, type your improved text in a suggestion block, and submit the comment.*',
-              '',
-              `After adding your suggestion, return to ${context.payload.issue.html_url} and comment \`/done 6\` to continue.`,
+              'Next, we\'ll have a look at the draft of the preregistration that your (imaginary) collaborators have prepared.',
+              'But before doing so, let\'s learn how this situation came about.', 
+              '', 
+              'To do so, we need to introduce **branches**. A branch is a parallel version of your project within the same repository.', 
+              'Each branch marks the current state of that version of your project and keeps track of its own changes.',
+              'The **main branch** usually represents the official version of the project.', 
+              'In collaborative projects, branches allow people to make changes without affecting the main branch.',
+              'For example, your collaborators created a separate branch to work on the preregistration draft.', 
+              '', 
+              'Once work in a branch is ready, your collaborators (or you) can create a **pull request** in GitHub.', 
+              'A pull request is a way to ask that changes from one branch be added to another.', 
+              'In this example case, your collaborators are asking to add the preregistration draft to the main branch.', 
+              'A pull request lets others review the changes, give feedback, and approve them before **merging** (applying the proposed changes to the target branch).',
+              'Once merged, both branches share the same version of the project again.', 
+              '', 
+              'You\’re now inside such a pull request: Your collaborators are waiting for your feedback on their preregistration draft.',
+              '', 
+              '**Task:** Suggest a change to the preregistration file',
+              '- Go to the **Files changed** tab of this PR.',
+              '- Find the typo in line 12 (empierically).', 
+              '- Suggest a correction by clicking the "+" symbol next to the line, typing the correction, and submitting your suggestion.',
+              `Once you\'ve suggested your change, return to ${context.payload.issue.html_url} and comment \`/done 6\` to continue`,
               '',
               '<img src="https://raw.githubusercontent.com/HannesDiemerling/repro-collab/main/gifs/make_suggestion.gif" alt="Make Suggestion GIF">'
             ];
