@@ -621,7 +621,7 @@ jobs:
             // Cross off “8.”, reveal “9.”
             const updated = context.payload.issue.body
               .replace(/^(\s*-\s*\[)\s\](\s*8\..*)$/m, '$1x]$2')
-              + '\n- [ ] 9. Generate and Uplode Steven Data.';
+              + '\n- [ ] 9. Generate and Upload Steven Data.';
             
             await github.rest.issues.update({
               owner: context.repo.owner,
