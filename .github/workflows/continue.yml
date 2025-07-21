@@ -679,7 +679,7 @@ jobs:
             });
             
             const validContributors = contributors.filter(c => 
-              !['aaronpeikert', 'hannesdiemarling', 'anabelbue'].includes(c.login.toLowerCase())
+              !['aaronpeikert'].includes(c.login.toLowerCase())
             );
             
             if (validContributors.length < 2) {
