@@ -110,9 +110,9 @@ jobs:
                 'You can find an overview of Markdown formatting options [here](https://media.datacamp.com/legacy/image/upload/v1697797990/Marketing/Blog/Markdown_Cheat_Sheet.pdf).',
                 '',
                 '**Task:** Create a new issue in your repository!',
-                '- Go to the *Issues* tab.', 
-                '- Click *New Issue*.', 
-                '- Use this exact title: *Preregistration needed*.', 
+                '- Go to the **Issues** tab.', 
+                '- Click **New Issue**.', 
+                '- Use this exact title: **Preregistration needed**.', 
                 '- Add a brief introduction about yourself, what brings you to this workshop and what you\'re hoping to learn. Make sure to try different Markdown formatting options!', 
                 `- **Afterwards:** Return to this issues and comment \`/done 4\` here: ${preregistrationUrl}`,
                 '',
@@ -237,7 +237,11 @@ jobs:
               await github.rest.issues.createComment({
                 owner, repo,
                 issue_number: firstIssue.number,
-                body: `@${context.actor}, you’ve completed step 4, now close this issue and comment \`/done 5\` here: ${preregistrationUrl}!`
+                body: `@${context.actor}, you\’ve completed milestone 4!  
+                Imagine your collaborators saw your reminder and quickly put together a first draft of the preregistration (how efficient!).
+                In the next part of the workshop, you will help refine this preregistration.  
+                But first, close the issue you are currently in as we won\'t need it anymore. Closing issues when they are are no longer needed is good practice for keeping your repository organized.  
+                After you\'ve closed the issue, comment \`/done 5\` here: ${preregistrationUrl}!`
               });
             }
     # 5.1) Verify "Create your own first issue" is closed in the fork
