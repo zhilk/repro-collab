@@ -492,7 +492,7 @@ jobs:
             }
             
             // Update issue body
-            const updatedBody = context.payload.issue.body
+            const updatedBody6 = context.payload.issue.body
               .replace(/^(\s*-\s*\[)\s\](\s*6\..*)$/m, '$1x]$2')
               + '\n- [ ] 7. Merge the pull request';
             
@@ -500,7 +500,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: updatedBody
+              body: updatedBody6
             });
             
             // Success comment
@@ -565,7 +565,7 @@ jobs:
             }
             
             // Cross off “7.”, reveal “8.”
-            const updated = context.payload.issue.body
+            const updatedBody7 = context.payload.issue.body
               .replace(/^(\s*-\s*\[)\s\](\s*7\..*)$/m, '$1x]$2')
               + '\n- [ ] 8. Find your group';
             
@@ -573,7 +573,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: updatedBody
+              body: updatedBody7
             });
             
             // Final success comment
@@ -619,7 +619,7 @@ jobs:
           github-token: ${{ secrets.GH_PAT_CROSSREPO }}
           script: |
             // Cross off “8.”, reveal “9.”
-            const updated = context.payload.issue.body
+            const updatedBody8 = context.payload.issue.body
               .replace(/^(\s*-\s*\[)\s\](\s*8\..*)$/m, '$1x]$2')
               + '\n- [ ] 9. Generate and Upload Steven Data.';
             
@@ -627,7 +627,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: updatedBody
+              body: updatedBody8
             });
             
             // Success comment
@@ -713,7 +713,7 @@ jobs:
             }
             
             // Cross off “9.”, reveal “10.”
-            const updated = context.payload.issue.body
+            const updatedBody9 = context.payload.issue.body
               .replace(/^(\s*-\s*\[)\s\](\s*9\..*)$/m, '$1x]$2')
               + '\n- [ ] 10. Collaborate on issues';
             
@@ -721,7 +721,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: updatedBody
+              body: updatedBody9
             });
             
             // 4) Success comment
@@ -835,14 +835,14 @@ jobs:
             });
             
             // Update main issue - mark 10 complete
-            const updatedBody = context.payload.issue.body
+            const updatedBody10 = context.payload.issue.body
               .replace(/^(\s*-\s*\[)\s\](\s*10\..*)$/m, '$1x]$2');
             
             await github.rest.issues.update({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: updatedBody
+              body: updatedBody10
             });
             
             // Final success comment
