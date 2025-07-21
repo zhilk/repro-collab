@@ -564,9 +564,10 @@ jobs:
               return;
             }
             
-            // Update issue body - mark 7 as complete
-            const updatedBody = context.payload.issue.body
-              .replace(/^(\s*-\s*\[)\s\](\s*7\..*)$/m, '$1x]$2');
+            // Cross off “7.”, reveal “8.”
+            const updated = context.payload.issue.body
+              .replace(/^(\s*-\s*\[)\s\](\s*7\..*)$/m, '$1x]$2')
+              + '\n- [ ] 8. Find your group';
             
             await github.rest.issues.update({
               owner: context.repo.owner,
@@ -617,10 +618,10 @@ jobs:
         with:
           github-token: ${{ secrets.GH_PAT_CROSSREPO }}
           script: |
-            // Update issue body - mark 8 as complete and add 9
-            const updatedBody = context.payload.issue.body
+            // Cross off “8.”, reveal “9.”
+            const updated = context.payload.issue.body
               .replace(/^(\s*-\s*\[)\s\](\s*8\..*)$/m, '$1x]$2')
-              + '\n- [ ] 9. Generate data together';
+              + '\n- [ ] 9. Generate and Uplode Steven Data.';
             
             await github.rest.issues.update({
               owner: context.repo.owner,
@@ -711,8 +712,8 @@ jobs:
               return;
             }
             
-            // 3) Update main issue - mark 9 complete and add 10
-            const updatedBody = context.payload.issue.body
+            // Cross off “9.”, reveal “10.”
+            const updated = context.payload.issue.body
               .replace(/^(\s*-\s*\[)\s\](\s*9\..*)$/m, '$1x]$2')
               + '\n- [ ] 10. Collaborate on issues';
             
