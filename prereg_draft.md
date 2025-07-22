@@ -35,9 +35,11 @@ Based on the theoretical framework and prior observations, we predict:
 ## Methods
 
 ### Participants
+
 Five participants with normal or corrected-to-normal vision will complete the study.
 
 ### Materials
+
 - **Tachistoscope**: A device that presents visual stimuli for precisely controlled durations
 - **Stimuli**: Black squares on a white background
   - Reference square: 9.00 sq.mm (constant)
@@ -68,6 +70,7 @@ Five participants with normal or corrected-to-normal vision will complete the st
 ## Analysis Plan
 
 ### Primary Analysis
+
 For each participant individually:
 
 1. Calculate median discrimination times for each stimulus difference
@@ -77,6 +80,7 @@ For each participant individually:
 ### Visual Inspection Criteria
 
 We will examine whether the data show:
+
 - A horizontal line (constant discrimination time) for very small stimulus differences
 - A transition point (likely corresponding to the JND)
 - A negatively sloped line for larger stimulus differences (indicating faster discrimination as difference increases)
