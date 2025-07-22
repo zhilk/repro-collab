@@ -903,7 +903,7 @@ jobs:
                 '1. Navigate to your fork on GitHub',
                 '2. Create/navigate to `Data/` folder (if it doesn\'t exist yet)',
                 '3. Upload your generated data file(s)',
-                '4. Commit the files with a descriptive message'
+                '4. Commit the files with a descriptive message',
                 '',
                 '### Step 3: Mark Complete',
                 `Return to: ${preregistrationUrl} and comment \`/done 9\``,
