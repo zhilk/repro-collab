@@ -627,7 +627,7 @@ jobs:
               '    * What aspects of your workflow are difficult to translate to GitHub?',
               '3. ➡️ When you are done with the discussion, move down to the other end of the line and chose a partner',
               '4. ➡️ Participate in their discussion till the time is up.',
-              '<img src="https://${context.repo.owner}.github.io/${context.repo.repo}/assets/pair-finding.svg" alt="Visual explanation of the partner finding exercise.">',
+              '<img src=\"https://${context.repo.owner}.github.io/${context.repo.repo}/assets/pair-finding.svg\",alt=\"Visual explanation of the partner finding exercise.\">',
               '',
               `**Afterwards**: comment \`/done 8\` here.`
               ];
