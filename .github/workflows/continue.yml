@@ -693,17 +693,29 @@ jobs:
           script: |
             const [owner, repo] = process.env.FORK_REPO.split('/');
             
-            // 1) Check for 2 contributors (excluding specified users)
+            // 1) Check for 2 contributors (excluding upstream contributors)
             const { data: contributors } = await github.rest.repos.listContributors({
               owner, repo,
               per_page: 100
             });
             
+            // Get upstream contributors to exclude
+            const { data: upstreamContributors } = await github.rest.repos.listContributors({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              per_page: 100
+            });
+            
+            const upstreamLogins = upstreamContributors.map(c => c.login.toLowerCase());
+            
             const validContributors = contributors.filter(c => 
-              !['aaronpeikert','hannesdiemerling', 'anabelbue'].includes(c.login.toLowerCase())
+              !upstreamLogins.includes(c.login.toLowerCase())
             );
             
-            if (validContributors.length < 2) {
+            // Skip check if comment was made by an upstream contributor
+            const isUpstreamContributor = upstreamLogins.includes(context.actor.toLowerCase());
+            
+            if (!isUpstreamContributor && validContributors.length < 2) {
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
