@@ -23,11 +23,13 @@ If you want to use your fork as the base for hosting additional workshops (where
 You need **two different GitHub PATs** with specific permissions:
 
 ##### 1. Cross-Repository PAT (`GH_PAT_CROSSREPO`)
+
 - **Type**: Classic Personal Access Token
 - **Required Scope**: `public_repo`
 - **Purpose**: Allows the workshop automation to create issues and comments in the main repository when someone forks your repository
 
 ##### 2. Upstream PAT (`GH_PAT_UPSTREAM`)
+
 - **Type**: Fine-grained Personal Access Token
 - **Target**: Your forked repository
 - **Required Permissions**:

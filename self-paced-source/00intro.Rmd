@@ -1,2 +1,5 @@
 # Getting Started {-}
 
+To start the workshop you need to [fork the repository aaronpeikert/repro-collab](https://github.com/aaronpeikert/repro-collab/fork).
+
+Then take a look at [the issues and find the one with your name](https://github.com/aaronpeikert/repro-collab/issues).

@@ -17,6 +17,8 @@ These researchers discovered that the time needed to discriminate between two st
 
 ## Background
 
+More background: <https://aaronpeikert.github.io/repro-collab/self-paced/background-on-psychophysics.html>
+
 When judging sizes, our visual system faces a challenge: we need to quickly and accurately compare objects that may differ subtly or dramatically. Previous research has shown that:
 
 1. **Discrimination time** (how long it takes to judge which of two objects is larger) depends on how different the objects are in size
