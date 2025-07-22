@@ -120,6 +120,11 @@ jobs:
             **bold**
             *italic*
 
+            A todo list:
+
+            - [x] done
+            - [ ] todo
+
             For Git's sake, put each sentence on its own line.
             Please.
             I beg you.
