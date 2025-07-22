@@ -237,6 +237,7 @@ Happy collaborations:
 
 This is as much as a **technological** challange, as a **sociological** one.
 
+
 ---
 
 Speaking of technology, why can't we use good old:
@@ -333,8 +334,20 @@ Speaking of technology, why can't we use good old:
 * only one person at any given time
 * anyone can edit everything, without anyone noticing
 
-
 ]
+
+---
+class: center, middle
+
+# Collaboration is hard
+
+--
+
+# Github is hard
+
+--
+
+# Alternatives are hard
 
 ---
 class: center, middle
@@ -344,9 +357,9 @@ class: center, middle
 ---
 name: github
 
-.pull-left[
-
 ## Technological/GitHub
+
+.pull-left[
 
 1. repositories
 2. forks
@@ -354,8 +367,6 @@ name: github
 4. pull requests
 
 ]
-
-
 
 ---
 
@@ -370,10 +381,12 @@ name: github
 template: github
 
 .pull-right[
+
     1. [aaronpeikert/repro-workshop](https://github.com/aaronpeikert/repro-workshop/)
     2. in a second
-    3. 10min
-    4. 90-150min
+    3. 10min on your own
+    4. 90-150min in a team
+
 ]
 
 ---
@@ -387,7 +400,7 @@ template: github
 ]
 
 ```{r, echo=FALSE}
-link <- "aaronpeikert.github.io/repro-collab/"
+link <- "aaronpeikert.github.io/repro-collab/self-paced"
 ```
 
 ```{r, echo=FALSE, out.width = "30%", out.extra='style="float:center"'}
