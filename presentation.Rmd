@@ -446,3 +446,92 @@ knitr::include_graphics("assets/qr_slides.svg")
 
 Provide feedback: https://github.com/aaronpeikert/repro-collab/issues/new
 
+---
+
+---
+
+## What makes an ideal issue?
+
+--
+
+The next step is clear.
+
+1. Discussion
+2. Decission
+2. Implementation
+
+---
+
+## How can issues be used to organize tasks and responsibilities?
+
+--
+
+* people can voice their opinion in way that is documented
+* mentioning via @username to trigger discussion/decision
+* people can assign themselves or others
+
+---
+
+## How to get/provide feedback via GitHub?
+
+--
+
+* pull requests are ideally suited to get/provide feedback
+* can be integrated into issues
+* tracking other peoples contribution via PR is possible
+
+---
+
+## What aspects of your workflow are difficult to translate to GitHub?
+
+---
+
+## How much skill is required?
+
+--
+
+Either:
+
+.pull-left[
+
+**Git Wizard**
+
+
+]
+
+.pull-right[
+
+**Project Organization Wizard**
+
+]
+
+--
+
+Or some of both.
+
+---
+
+.pull-left[
+    
+# Stay Sane
+
+]
+
+.pull-right[
+
+![A comic making fun of git.](https://imgs.xkcd.com/comics/git.png)
+
+]
+
+.footnote[Comic: [xkcd.com/1597](https://xkcd.com/1597/) "Git" by Randall Munroe, licensed under [CC BY-NC 2.5](https://creativecommons.org/licenses/by-nc/2.5/)]
+
+---
+
+# Making a diff(erence)
+
+
+* coordinate
+* make atomic changes
+* commit often, push less often
+* use markdown everywhere
+* when using markdown place each sentence on its own line
