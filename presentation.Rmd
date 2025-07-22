@@ -243,9 +243,9 @@ This is as much as a **technological** challange, as a **sociological** one.
 Speaking of technology, why can't we use good old:
 
 * Word
-* Google Docs
+* Google Docs / Overleaf
 * Google Collab
-* Dropbox
+* Dropbox / Seafile etc.
 
 ---
 
@@ -335,6 +335,31 @@ Speaking of technology, why can't we use good old:
 * anyone can edit everything, without anyone noticing
 
 ]
+
+---
+
+# GitHub / GitLab
+
+.pull-left[
+
+## Upside
+
+* reproducibility
+* high level of control
+* thousands of people can collaborate
+* any collaboration workflow is possible
+
+]
+
+.pull-right[
+
+## Downside
+
+* any collaboration workflow is possible
+* highly complex
+
+]
+
 
 ---
 class: center, middle
