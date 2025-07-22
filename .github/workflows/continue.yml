@@ -220,7 +220,9 @@ jobs:
             const milestone4BodyLines = [
               '🎉 Milestone 4 complete - "Open a issue"!',
               '',
-              `**Task:** Milestone 5 is now available, go back to your first Issue read the new comment: ${firstIssueUrl}`,
+              `**Task:** Milestone 5 is now available, go back to the issue you just solved, read the new comment, and close the issue: ${firstIssueUrl}`,
+              '',
+              'Click the "Close issue" button.',
               '',
               `**Afterwards:** Comment \`/done 5\` here.`,
             ];
