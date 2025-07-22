@@ -407,10 +407,10 @@ template: github
 
 .pull-right[
 
-    1. [aaronpeikert/repro-workshop](https://github.com/aaronpeikert/repro-workshop/)
-    2. in a second
-    3. 10min on your own
-    4. 90-150min in a team
+1. [aaronpeikert/repro-workshop](https://github.com/aaronpeikert/repro-workshop/)
+2. in a second
+3. 10min on your own
+4. 90-150min in a team
 
 ]
 
@@ -433,4 +433,9 @@ generate_svg(qr_code(link), here::here("assets/", "qr_slides.svg"), foreground =
 knitr::include_graphics("assets/qr_slides.svg")
 ```
 
+---
+
+# This workshop is a beta version
+
+Provide feedback: https://github.com/aaronpeikert/repro-collab/issues/new
 

@@ -43,7 +43,10 @@ jobs:
             
             The **Cheat Sheet** in the repository gives a quick overview of the key terms on GitHub and their core functions.
             
-            Currently, you are in an *issue*, which is a way to track tasks, ideas, or bugs within a specific repository. 
+            Currently, you are in an *issue*, which is a way to track tasks, ideas, or bugs within a specific repository.
+
+            If you have a problem, a suggestion for improvement, or cool ideas during the workshop, please open an issue: https://github.com/${context.repo.owner}/${context.repo.repo}/issues/new
+
             Throughout the workshop, we use this issue to track your progress. 
             Every time you reply with \`/done NUMBER\`, the list below gets updated.
 
@@ -91,7 +94,7 @@ jobs:
             3. Check the box labeled **“Issues”**.  
             4. When finished, reply here with \`/done 3\`.
             
-            If something doesn’t match the documentation or you spot an anomaly, don’t hesitate to ask. 
+            If something doesn’t match the documentation or you spot an anomaly, don’t hesitate to ask or to open an issue: https://github.com/${context.repo.owner}/${context.repo.repo}/issues/new
             In science, there are no silly questions, only hypotheses waiting to be tested. 
             Let’s keep things reproducible, transparent, and maybe even a bit fun. 
             Happy experimenting!
