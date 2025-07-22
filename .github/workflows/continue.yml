@@ -109,21 +109,21 @@ jobs:
                 '', 
                 'In issues (as in many GitHub tools), text is formatted in Markdown. Markdown lets you write plain text while adding simple symbols to control formatting, such as **bold**, *italics*, or headings.',
                 `
-                \`\`\`markdown
-                # A heading
+            \`\`\`markdown
+            # A heading
 
-                A list:
+            A list:
 
-                  * apple
-                  * banana
-                
-                **bold**
-                *italic*
+            * apple
+            * banana
 
-                For Git's sake, put each sentence on its own line.
-                Please.
-                I beg you.
-                \`\`\`
+            **bold**
+            *italic*
+
+            For Git's sake, put each sentence on its own line.
+            Please.
+            I beg you.
+            \`\`\`
                 `,
                 'You can find an overview of Markdown formatting options [here](https://media.datacamp.com/legacy/image/upload/v1697797990/Marketing/Blog/Markdown_Cheat_Sheet.pdf).',
                 '',
