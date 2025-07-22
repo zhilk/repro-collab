@@ -416,6 +416,13 @@ template: github
 
 ---
 
+# Reproducibility
+
+[Research as a software product](https://github.com/aaronpeikert/repro-collab/blob/1e42e2dfc205bb491a31602e6271f9c8e46c325a/presentation.Rmd#L87-L98).
+
+
+---
+
 ## Get Active
 
 .left[
