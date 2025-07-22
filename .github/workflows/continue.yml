@@ -666,7 +666,7 @@ jobs:
               '**Milestone 9 is now available: Generate data together**',
               '',
               'In this milestone, you will:',
-              '1. Use a Shiny app to generate synthetic data',
+              '1. Use a Shiny app to gather data',
               '2. Upload the data to the **less experienced** partner\'s fork',
               '3. Collaborate on managing the data',
               '',
@@ -718,7 +718,7 @@ jobs:
             try {
               const { data: contents } = await github.rest.repos.getContent({
                 owner, repo,
-                path: 'Data'
+                path: 'data'
               });
               
               if (Array.isArray(contents)) {
@@ -736,7 +736,7 @@ jobs:
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: context.issue.number,
-                body: '🚫 Milestone 9 not complete. Create a "Data" folder and upload at least 2 data files from the Shiny app. Then run `/done 9` again.'
+                body: '🚫 Milestone 9 not complete. Create a "data" folder and upload at least 2 data files from the Shiny app. Then run `/done 9` again.'
               });
               return;
             }
@@ -890,18 +890,18 @@ jobs:
             
             const dataGenIssue = await github.rest.issues.create({
               owner, repo,
-              title: 'Generate and upload research data',
+              title: 'Generate and add research data',
               body: [
-                '## 👥 Partner Task: Generate and upload synthetic data',
+                '## 👥 Partner Task: Generate and add data',
                 '',
                 '### Step 1: Generate Data',
-                'Visit: [link] and generate data together (recommended: 20 trials)',
+                `Visit the [🔬 experiment 👀](https://${context.repo.owner}.github.io/${context.repo.repo}/steven) and generate data together (recommended: 20 trials)`,
                 '',
                 '### Step 2: Upload to GitHub',
                 '**Upload to the less experienced partner\'s fork:**',
                 '',
                 '1. Navigate to your fork on GitHub',
-                '2. Create/navigate to `Data/` folder (if it doesn\'t exist yet)',
+                '2. Create/navigate to `data/` folder (if it doesn\'t exist yet)',
                 '3. Upload your generated data file(s)',
                 '4. Commit the files with a descriptive message',
                 '',
