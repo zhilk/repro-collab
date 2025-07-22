@@ -15,7 +15,7 @@ ui <- fluidPage(
       ))
     )
   ),
-  titlePanel(h3("Click on the square that is larger")),
+  titlePanel(h3("Click anywhere on the side of the larger square")),
   fluidRow(
     column(12,
            plotOutput("plot", height = "400px", click = "plot_click"),

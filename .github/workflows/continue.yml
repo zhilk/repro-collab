@@ -222,7 +222,9 @@ jobs:
             const milestone4BodyLines = [
               '🎉 Milestone 4 complete - "Open a issue"!',
               '',
-              `**Task:** Milestone 5 is now available, go back to your first Issue read the new comment: ${firstIssueUrl}`,
+              `**Task:** Milestone 5 is now available, go back to the issue you just solved, read the new comment, and close the issue: ${firstIssueUrl}`,
+              '',
+              'Click the "Close issue" button.',
               '',
               `**Afterwards:** Comment \`/done 5\` here.`,
             ];
@@ -242,8 +244,11 @@ jobs:
                 body: `@${context.actor}, you\’ve completed milestone 4!  
                 Imagine your collaborators saw your reminder and quickly put together a first draft of the preregistration (how efficient!).
                 In the next part of the workshop, you will help refine this preregistration.  
-                But first, close the issue you are currently in as we won\'t need it anymore. Closing issues when they are are no longer needed is good practice for keeping your repository organized.  
-                After you\'ve closed the issue, comment \`/done 5\` here: ${preregistrationUrl}!`
+                But first, **close this issue** you since you completed the task. Closing issues when they are are no longer needed is good practice for keeping your repository organized.  
+
+                **Task:** Close this issue.
+
+                **Afterwards:** When you closed the issue, comment \`/done 5\` here: ${preregistrationUrl}!`
               });
             }
     # 5.1) Verify "Create your own first issue" is closed in the fork

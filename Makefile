@@ -10,7 +10,10 @@ publish/:
 	mkdir -p $@
 	cp -r $^ $@
 
-publish/:  self-paced/ assets/ steven/
+publish/:  self-paced/ assets/ steven/ presentation.html xaringan-themer.css
+
+presentation.html: presentation.Rmd
+	Rscript -e 'rmarkdown::render("$<", "all")'
 
 self-paced/: self-paced-source/ renv
 	Rscript -e "bookdown::render_book('self-paced-source')"

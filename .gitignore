@@ -5,3 +5,7 @@
 self-paced/
 publish/
 steven/
+*_cache/
+*_files/
+presentation.html
+xaringan-themer.css
