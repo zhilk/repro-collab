@@ -554,31 +554,19 @@ jobs:
           script: |
             const [owner, repo] = process.env.FORK_REPO.split('/');
             
-            // Find the PR we created
-            const { data: prs } = await github.rest.pulls.list({
-              owner, repo,
-              state: 'all',
-              per_page: 20,
-              sort: 'created',
-              direction: 'desc'
-            });
-            
-            const ourPr = prs.find(pr =>
-              pr.title === 'Review this preregistration update'
-            );
-            
-            if (!ourPr) {
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.issue.number,
-                body: '🚫 Could not find the PR. Please check your fork for the preregistration PR.'
+            // Check if preregistration.md file exists in the fork
+            let preregExists = false;
+            try {
+              const { data: file } = await github.rest.repos.getContent({
+                owner, repo,
+                path: 'preregistration.md'
               });
-              return;
+              preregExists = true;
+            } catch (error) {
+              // File doesn't exist
             }
             
-            //Hotfix, check if closed for robustness
-            if (ourPr.state !== 'closed') {
+            if (!preregExists) {
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
@@ -807,16 +795,16 @@ jobs:
             
             const issue3 = await github.rest.issues.create({
               owner, repo,
-              title: 'Add both authors',
+              title: 'Add yourself as authors',
               body: [
-                '## Credit both team members',
+                '## Credit all team members',
                 '',
-                'Both of you did the work - both should get credit!',
+                'Great teamwork - you should get credit!',
                 '',
                 '**To do:**',
-                '- [ ] Add both names to the author section',
-                '- [ ] Add your affiliations (make them up for this workshop)',
-                '- [ ] Add ORCID IDs (use 0000-0000-0000-0000 as placeholder)',
+                '- [ ] Add your names to the author section of the preregistration',
+                '- [ ] Add your affiliations',
+                '- [ ] [optional] Add ORCID IDs (use 0000-0000-0000-0000 as placeholder)',
                 '- [ ] Say who did what (use CRediT roles below)',
                 '',
                 '**CRediT roles you can use:**',
@@ -824,7 +812,7 @@ jobs:
                 '- Investigation, Methodology, Project administration',
                 '- Writing – original draft, Writing – review & editing',
                 '',
-                '**Make sure you both get proper credit!**'
+                '**Make sure you both get proper for writing together!**'
               ].join('\n')
             });
             
