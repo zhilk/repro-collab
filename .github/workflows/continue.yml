@@ -95,7 +95,8 @@ jobs:
                 owner: context.repo.owner,
                 repo:  context.repo.repo,
                 issue_number: context.issue.number,
-                body: updatedBody
+                body: updatedBody,
+                state: 'open'
               });
               
               // 3) Create a new issue in the fork for them to "create your own first issue"
@@ -204,7 +205,8 @@ jobs:
               owner: context.repo.owner,
               repo:  context.repo.repo,
               issue_number: context.issue.number,
-              body: updated
+              body: updated,
+              state: 'open'
             });
 
             // 6) Celebrate
@@ -417,7 +419,8 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: updatedBody5
+              body: updatedBody5,
+              state: 'open'
             });
 
             // Comment on the upstream issue
@@ -512,7 +515,7 @@ jobs:
             }
             
             // Update issue body
-            const updatedBody = context.payload.issue.body
+            const updatedBody6 = context.payload.issue.body
               .replace(/^(\s*-\s*\[)\s\](\s*6\..*)$/m, '$1x]$2')
               + '\n- [ ] 7. Merge the pull request';
             
@@ -520,7 +523,8 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: updatedBody
+              body: updatedBody6,
+              state: 'open'
             });
             
             // Success comment
@@ -584,47 +588,336 @@ jobs:
               return;
             }
             
-            // Update issue body - mark 7 as complete
-            const updatedBody = context.payload.issue.body
-              .replace(/^(\s*-\s*\[)\s\](\s*7\..*)$/m, '$1x]$2');
+            // Cross off “7.”, reveal “8.”
+            const updatedBody7 = context.payload.issue.body
+              .replace(/^(\s*-\s*\[)\s\](\s*7\..*)$/m, '$1x]$2')
+              + '\n- [ ] 8. Find your group';
             
             await github.rest.issues.update({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: updatedBody
+              body: updatedBody7,
+              state: 'open'
             });
             
-            const workshopCompleteBody = `
-            🎉 **Congratulations @${context.actor}!** 🎉
+            // Final success comment
+            const workshopCompleteLines = [
+              `🎉 **Congratulations @${context.actor}!** 🎉`,
+              '',
+              'You completed everything you can do alone:',
+              '',
+              'You\'ve mastered:',
+              '- ✅ Forking repositories',
+              '- ✅ Handling issues',
+              '- ✅ Reviewing & merging PRs',
+              '',
+              'Now you need a partner. The goal of the next task is to find a partner with a different experience level.',
+              '',
+              '---',
+              '',
+              '**Task**: Stand up and move to the marked corner.',
+              '',
+              '1. ➡️ Form a line.',
+              '2. ➡️ Discuss with your neighbor the following questions:',
+              '    * What makes an ideal issue?',
+              '    * How can issues be used to organize tasks and responsibilities?',
+              '    * Imagine you want to give feedback to your student, collaborator, etc. how do usually provide it? How could you use GitHub?',
+              '    * What can you use PRs for?',
+              '    * What aspects of your workflow are difficult to translate to GitHub?',
+              '3. ➡️ When you are done with the discussion, move down to the other end of the line and chose a partner',
+              '4. ➡️ Participate in their discussion till the time is up.',
+              '<img src="https://${context.repo.owner}.github.io/${context.repo.repo}/assets/pair-finding.svg" alt="Visual explanation of the partner finding exercise.">',
+              '',
+              `**Afterwards**: comment \`/done 8\` here.`
+              ];
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: workshopCompleteLines.join('\n')
+            });
+      # Milestone 8: Build groups
+      - name: Verify milestone 8
+        if: steps.parse.outputs.result == '8'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GH_PAT_CROSSREPO }}
+          script: |
+            // Cross off “8.”, reveal “9.”
+            const updatedBody8 = context.payload.issue.body
+              .replace(/^(\s*-\s*\[)\s\](\s*8\..*)$/m, '$1x]$2')
+              + '\n- [ ] 9. Generate and Upload Steven Data.';
             
-            You completed everything you can do alone:
+            await github.rest.issues.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: updatedBody8,
+              state: 'open'
+            });
             
-            You've mastered:
-            - ✅ Forking repositories
-            - ✅ Handling issues
-            - ✅ Reviewing & merging PRs
-            
-            Now you need a partner. The goal of the next task is to find a partner with a different experience level.
-            
-            ---
-            
-            **Task**: Stand up and move to the marked corner.
-            
-            1. ➡️ Form a line.
-            2. ➡️ Discuss with your neighbor the following questions:
-                * What makes an ideal issue?
-                * How can issues be used to organize tasks and responsibilities?
-                * Imagine you want to give feedback to your student, collaborator, etc. how do usually provide it? How could you             use GitHub?
-                * What can you use PRs for?
-                * What aspects of your workflow are difficult to translate to GitHub?
-            3. ➡️ When you are done with the discussion, move down to the other end of the line and chose a partner
-            4. ➡️ Participate in their discussion till the time is up.
-            <img src="https://${context.repo.owner}.github.io/${context.repo.repo}/assets/pair-finding.svg" alt="Visual             explanation of the partner finding exercise.">`;
+            // Success comment
+            const milestone8BodyLines = [
+              '🎉 Great that you found your partner!',
+              '',
+              '**Milestone 9 is now available: Generate data together**',
+              '',
+              'In this milestone, you will:',
+              '1. Use a Shiny app to generate synthetic data',
+              '2. Upload the data to the **less experienced** partner\'s fork',
+              '3. Collaborate on managing the data',
+              '',
+              '**Important:** Only the less experienced GitHub user should run `/done 9` after completing all tasks.',
+              '',
+              'I\'ll create an issue with detailed instructions for you now.'
+            ];
             
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: workshopCompleteBody
+              body: milestone8BodyLines.join('\n')
+            });
+
+      # Milestone 9: Generate and upload data + Auto-trigger Milestone 10
+      - name: Verify milestone 9 and auto-trigger milestone 10
+        if: steps.parse.outputs.result == '9'
+        uses: actions/github-script@v7
+        env:
+          FORK_REPO: ${{ steps.vars.outputs.fork_repo }}
+        with:
+          github-token: ${{ secrets.GH_PAT_CROSSREPO }}
+          script: |
+            const [owner, repo] = process.env.FORK_REPO.split('/');
+            
+            // 1) Check for 2 contributors (excluding specified users)
+            const { data: contributors } = await github.rest.repos.listContributors({
+              owner, repo,
+              per_page: 100
+            });
+            
+            const validContributors = contributors.filter(c => 
+              !['aaronpeikert','hannesdiemerling', 'anabelbue'].includes(c.login.toLowerCase())
+            );
+            
+            if (validContributors.length < 2) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: '🚫 Milestone 9 not complete. We need both partners as contributors in the fork. Make sure you both committed something, then run `/done 9` again.'
+              });
+              return;
+            }
+            
+            // 2) Check for Data folder with files
+            let dataFiles = [];
+            try {
+              const { data: contents } = await github.rest.repos.getContent({
+                owner, repo,
+                path: 'Data'
+              });
+              
+              if (Array.isArray(contents)) {
+                dataFiles = contents.filter(item => 
+                  item.type === 'file' && 
+                  (item.name.endsWith('.csv') || item.name.endsWith('.txt') || item.name.endsWith('.json'))
+                );
+              }
+            } catch (error) {
+              // Data folder doesn't exist
+            }
+            
+            if (dataFiles.length < 2) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: '🚫 Milestone 9 not complete. Create a "Data" folder and upload at least 2 data files from the Shiny app. Then run `/done 9` again.'
+              });
+              return;
+            }
+            
+            // ✅ Milestone 9 successful - now automatically trigger Milestone 10
+            
+            const preregistrationUrl = context.payload.issue.html_url;
+            
+            // Create three collaboration issues in the fork
+            const issue1 = await github.rest.issues.create({
+              owner, repo,
+              title: 'Extend the preregistration document',
+              body: [
+                '## Expand the preregistration',
+                '',
+                'Time to make our preregistration more detailed!',
+                '',
+                '**To do:**',
+                '- [ ] Add a "Data Collection" section (describe how you generated the data)',
+                '- [ ] Add "Sample Size Justification" (why did you pick that number of trials?)',
+                '- [ ] Add "Exclusion Criteria" (what data would you exclude and why?)',
+                '- [ ] Clean up the existing content',
+                '',
+                '**Tips:**',
+                '- Write clearly like you\'re explaining to a colleague',
+                '- Mention the data files you uploaded',
+                '- Work together - one person writes, the other reviews',
+                '',
+                '**Assign this to someone and get started!**'
+              ].join('\n')
+            });
+            
+            const issue2 = await github.rest.issues.create({
+              owner, repo,
+              title: 'Improve the hypotheses',
+              body: [
+                '## Make your hypotheses better',
+                '',
+                'Now that you have data, let\'s make the hypotheses more specific.',
+                '',
+                '**To do:**',
+                '- [ ] Look at the current hypotheses in `preregistration.md`',
+                '- [ ] Make them more specific and testable',
+                '- [ ] Add what effect size you expect',
+                '- [ ] Write both null and alternative hypotheses',
+                '- [ ] Maybe add a third hypothesis?',
+                '',
+                '**Remember:**',
+                '- Good hypotheses can be proven wrong',
+                '- They should match your actual data variables',
+                '- Discuss in the comments before changing anything',
+                '',
+                '**This is great practice for collaborative writing!**'
+              ].join('\n')
+            });
+            
+            const issue3 = await github.rest.issues.create({
+              owner, repo,
+              title: 'Add both authors',
+              body: [
+                '## Credit both team members',
+                '',
+                'Both of you did the work - both should get credit!',
+                '',
+                '**To do:**',
+                '- [ ] Add both names to the author section',
+                '- [ ] Add your affiliations (make them up for this workshop)',
+                '- [ ] Add ORCID IDs (use 0000-0000-0000-0000 as placeholder)',
+                '- [ ] Say who did what (use CRediT roles below)',
+                '',
+                '**CRediT roles you can use:**',
+                '- Conceptualization, Data curation, Formal analysis',
+                '- Investigation, Methodology, Project administration',
+                '- Writing – original draft, Writing – review & editing',
+                '',
+                '**Make sure you both get proper credit!**'
+              ].join('\n')
+            });
+            
+            // Update main issue - mark both 9 and 10 complete
+            const updatedBody = context.payload.issue.body
+              .replace(/^(\s*-\s*\[)\s\](\s*9\..*)$/m, '$1x]$2')
+              + '\n- [x] 10. Collaborate on issues';
+            
+            await github.rest.issues.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: updatedBody,
+              state: 'open'
+            });
+            
+            // Combined success comment for both milestones
+            const completionBodyLines = [
+              '🎉 **Both milestones complete - Workshop done!** 🎉',
+              '',
+              `Great job @${context.actor} and your partner!`,
+              '',
+              '**What you just completed:**',
+              `- ✅ ${validContributors.length} people contributed to the fork`,
+              `- ✅ ${dataFiles.length} data files uploaded`,
+              `- ✅ 3 collaboration tasks created`,
+              '',
+              '**Your final tasks (work together on these):**',
+              `1. [Extend the preregistration](${issue1.data.html_url})`,
+              `2. [Improve the hypotheses](${issue2.data.html_url})`,
+              `3. [Add both authors](${issue3.data.html_url})`,
+              '',
+              '**How to collaborate:**',
+              '- Assign tasks to each other',
+              '- Use comments to discuss ideas',
+              '- Add labels to organize',
+              '- Close issues when done',
+              '- Create PRs for big changes',
+              '',
+              '---',
+              '',
+              '### 🏁 Workshop Complete!',
+              '',
+              '**You learned:**',
+              '✅ GitHub basics (forking, issues, PRs)',
+              '✅ Working together on code',
+              '✅ Giving feedback through reviews',
+              '✅ Managing projects with issues',
+              '',
+              'These skills will help you in research and beyond!',
+              '',
+              '**Thanks for participating! Keep collaborating!** 🚀',
+              '',
+              '*Work on the issues at your own pace. No more `/done` commands needed.*'
+            ];
+            
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: completionBodyLines.join('\n')
+            });
+
+      # Create data generation issue immediately after milestone 8
+      - name: Create data generation issue after milestone 8
+        if: steps.parse.outputs.result == '8'
+        uses: actions/github-script@v7
+        env:
+          FORK_REPO: ${{ steps.vars.outputs.fork_repo }}
+        with:
+          github-token: ${{ secrets.GH_PAT_CROSSREPO }}
+          script: |
+            const [owner, repo] = process.env.FORK_REPO.split('/');
+            const preregistrationUrl = context.payload.issue.html_url;
+            
+            const dataGenIssue = await github.rest.issues.create({
+              owner, repo,
+              title: 'Generate and upload research data',
+              body: [
+                '## 👥 Partner Task: Generate and upload synthetic data',
+                '',
+                '### Step 1: Generate Data',
+                'Visit: [link] and generate data together (recommended: 20 trials)',
+                '',
+                '### Step 2: Upload to GitHub',
+                '**Upload to the less experienced partner\'s fork:**',
+                '',
+                '1. Navigate to your fork on GitHub',
+                '2. Create/navigate to `Data/` folder (if it doesn\'t exist yet)',
+                '3. Upload your generated data file(s)',
+                '4. Commit,
+                '',
+                '### Step 3: Mark Complete',
+                `Return to: ${preregistrationUrl} and comment \`/done 9\``,
+                '',
+                '---',
+                '',
+                '📋 **Alternative upload methods & help:** [GitHub Upload Cheat Sheet](https://docs.github.com/en/repositories/working-with-files/managing-files/adding-a-file-to-a-repository)',
+                '',
+              ].join('\n')
+            });
+            
+            // Also comment in the main issue with the link
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `📋 I've created a detailed guide for generating and uploading data in your fork: ${dataGenIssue.data.html_url}\n\nPlease read it carefully with your partner before proceeding.`
             });
