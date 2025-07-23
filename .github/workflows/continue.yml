@@ -260,17 +260,22 @@ jobs:
             // 7) Notify the "Create your own first issue" in the fork
             const preregistrationUrl = context.payload.issue.html_url;
             if (firstIssue) {
+              const milestone4NotificationBodyLines = [
+                `@${context.actor}, you've completed milestone 4!`,
+                '',
+                'Imagine your collaborators saw your reminder and quickly put together a first draft of the preregistration (how efficient!).',
+                'In the next part of the workshop, you will help refine this preregistration.',
+                'But first, **close this issue** you since you completed the task. Closing issues when they are are no longer needed is good practice for keeping your repository organized.',
+                '',
+                '**Task:** Close this issue.',
+                '',
+                `**Afterwards:** When you closed the issue, comment \`/done 5\` here: ${preregistrationUrl}!`
+              ];
+              
               await github.rest.issues.createComment({
                 owner, repo,
                 issue_number: firstIssue.number,
-                body: `@${context.actor}, you\’ve completed milestone 4!  
-                Imagine your collaborators saw your reminder and quickly put together a first draft of the preregistration (how efficient!).
-                In the next part of the workshop, you will help refine this preregistration.  
-                But first, **close this issue** you since you completed the task. Closing issues when they are are no longer needed is good practice for keeping your repository organized.  
-
-                **Task:** Close this issue.
-
-                **Afterwards:** When you closed the issue, comment \`/done 5\` here: ${preregistrationUrl}!`
+                body: milestone4NotificationBodyLines.join('\n')
               });
             }
     # 5.1) Verify "Create your own first issue" is closed in the fork
