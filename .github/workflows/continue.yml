@@ -774,71 +774,62 @@ jobs:
             // Create three collaboration issues in the fork
             const issue1 = await github.rest.issues.create({
               owner, repo,
-              title: 'Extend the preregistration document',
+              title: 'Decide on meta-comment',
               body: [
-                '## Expand the preregistration',
+                '## Decide on meta-comment',
                 '',
-                'Time to make our preregistration more detailed!',
-                '',
-                '**To do:**',
-                '- [ ] Add a "Data Collection" section (describe how you generated the data)',
-                '- [ ] Add "Sample Size Justification" (why did you pick that number of trials?)',
-                '- [ ] Add "Exclusion Criteria" (what data would you exclude and why?)',
-                '- [ ] Clean up the existing content',
-                '',
-                '**Tips:**',
-                '- Write clearly like you\'re explaining to a colleague',
-                '- Mention the data files you uploaded',
-                '- Work together - one person writes, the other reviews',
-                '',
-                '**Assign this to someone and get started!**'
+                'The quote in the study overview is kind of funny, but should we really keep it?',
+                '- [ ] Make a decision to keep or remove it',
+                '- [ ] Justify your decision',
               ].join('\n')
             });
             
             const issue2 = await github.rest.issues.create({
               owner, repo,
-              title: 'Improve the hypotheses',
+              title: 'Update number of participants',
               body: [
-                '## Make your hypotheses better',
+                '## Update number of participants',
                 '',
-                'Now that you have data, let\'s make the hypotheses more specific.',
-                '',
-                '**To do:**',
-                '- [ ] Look at the current hypotheses in `preregistration.md`',
-                '- [ ] Make them more specific and testable',
-                '- [ ] Add what effect size you expect',
-                '- [ ] Write both null and alternative hypotheses',
-                '- [ ] Maybe add a third hypothesis?',
-                '',
-                '**Remember:**',
-                '- Good hypotheses can be proven wrong',
-                '- They should match your actual data variables',
-                '- Discuss in the comments before changing anything',
-                '',
-                '**This is great practice for collaborative writing!**'
+                'The preregistration currently says we\’ll collect data from five participants. But that number is clearly outdated — look how many we are!',
+                '- [ ] Count the number of participants in the room',
+                '- [ ] Update the number in the preregistration',
               ].join('\n')
             });
             
             const issue3 = await github.rest.issues.create({
               owner, repo,
-              title: 'Add yourself as authors',
+              title: 'Correct materials\' description',
               body: [
-                '## Credit all team members',
+                '## Correct materials\' description',
                 '',
-                'Great teamwork - you should get credit!',
+                'Some things have changed since the original study or the original study did not entail sufficient information for an exact replication.',
+                'These things need to be incorporated:',
+                '- We are using a different data collection tool',
+                '- We randomly generated the size of the comparison squares from a uniform distribution',
+              ].join('\n')
+            });
+
+            const issue4 = await github.rest.issues.create({
+              owner, repo,
+              title: 'Clarify procedure',
+              body: [
+                '## Clarify procedure',
                 '',
-                '**To do:**',
-                '- [ ] Add your names to the author section of the preregistration',
-                '- [ ] Add your affiliations',
-                '- [ ] [optional] Add ORCID IDs (use 0000-0000-0000-0000 as placeholder)',
-                '- [ ] Say who did what (use CRediT roles below)',
+                'The procedure description also needs a refresh:', 
+                '- We didn\'t use a tachistoscope',
+                '- We didn\'t categorize stimuli into three difficulty levels', 
+                '- None of us will ever complete 6,850 (!!) trials', 
+              ].join('\n')
+            });
+
+            const issue5 = await github.rest.issues.create({
+              owner, repo,
+              title: 'Improve data analysis plan',
+              body: [
+                '## Improve data analysis plan',
                 '',
-                '**CRediT roles you can use:**',
-                '- Conceptualization, Data curation, Formal analysis',
-                '- Investigation, Methodology, Project administration',
-                '- Writing – original draft, Writing – review & editing',
-                '',
-                '**Make sure you both get proper for writing together!**'
+                'So far, the preregistration says we\'ll plot the results for each participant and visually inspect the data.', 
+                'That’s... certainly *one* way to approach it, but does anyone have a better idea?'
               ].join('\n')
             });
             
@@ -886,9 +877,11 @@ jobs:
               '', 
               '**Task**: Revise the preregistration together', 
               '* Use issues to **assign tasks**.', 
-              `1. [Extend the preregistration](${issue1.data.html_url})`,
-              `2. [Improve the hypotheses](${issue2.data.html_url})`,
-              `3. [Add both authors](${issue3.data.html_url})`,
+              `1. [Decide on meta-comment](${issue1.data.html_url})`,
+              `2. [Update number of participants](${issue2.data.html_url})`,
+              `3. [Correct materials\' description](${issue3.data.html_url})`,
+              `4. [Clarify procedure](${issue4.data.html_url})`,
+              `5. [Improve data analysis plan](${issue5.data.html_url})`,
               '* Work individually in your **own branch or fork**.', 
               '* **Create PRs** when you\'re ready for feedback.', 
               '* Use PRs to **discuss and improve** the changes.', 
