@@ -859,7 +859,7 @@ jobs:
               'To enable that either:',
               '* type `.` (literal dot on your keyboard) while you in the code or PR view',
               '* replace `github.com` with `github.dev` in the URL',
-              `* https://github.dev/${context.repo.owner}/${context.repo.repo}/`,
+              `* https://github.dev/${owner}/${repo}/`,
               '',
               '👥 **How to collaborate**', 
               'You already explored different collaboration setups in milestone 9. For this task:', 
