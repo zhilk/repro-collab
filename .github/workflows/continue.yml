@@ -658,10 +658,12 @@ jobs:
       - name: Verify milestone 8
         if: steps.parse.outputs.result == '8'
         uses: actions/github-script@v7
+        env:
+          FORK_REPO: ${{ steps.vars.outputs.fork_repo }}
         with:
           github-token: ${{ secrets.GH_PAT_CROSSREPO }}
           script: |
-            // Cross off “8.”, reveal “9.”
+            // Cross off "8.", reveal "9."
             const updatedBody8 = context.payload.issue.body
               .replace(/^(\s*-\s*\[)\s\](\s*8\..*)$/m, '$1x]$2')
               + '\n- [ ] 9. Generate and Upload Steven Data.';
@@ -674,7 +676,38 @@ jobs:
               state: 'open'
             });
             
-            // Success comment
+            // Create data generation issue in the fork
+            const [owner, repo] = process.env.FORK_REPO.split('/');
+            const preregistrationUrl = context.payload.issue.html_url;
+            
+            const dataGenIssue = await github.rest.issues.create({
+              owner, repo,
+              title: 'Generate and add research data',
+              body: [
+                '## 👥 Partner Task: Generate and add data',
+                '',
+                '### Step 1: Generate Data',
+                `Visit the [🔬 experiment 👀](https://${context.repo.owner}.github.io/${context.repo.repo}/steven) and generate data together (recommended: 20 trials)`,
+                '',
+                '### Step 2: Upload to GitHub',
+                '**Upload to the less experienced partner\'s fork:**',
+                '',
+                '1. Navigate to your fork on GitHub',
+                '2. Create/navigate to `data/` folder (if it doesn\'t exist yet)',
+                '3. Upload your generated data file(s)',
+                '4. Commit the files with a descriptive message',
+                '',
+                '### Step 3: Mark Complete',
+                `Return to: ${preregistrationUrl} and comment \`/done 9\``,
+                '',
+                '---',
+                '',
+                '📋 **Alternative upload methods & help:** [GitHub Upload Cheat Sheet](https://docs.github.com/en/repositories/working-with-files/managing-files/adding-a-file-to-a-repository)',
+                '',
+              ].join('\n')
+            });
+            
+            // Success comment with link to the data generation issue
             const milestone8BodyLines = [
               '🎉 Great that you found your partner!',
               '',
@@ -687,7 +720,9 @@ jobs:
               '',
               '**Important:** Only the less experienced GitHub user should run `/done 9` after completing all tasks.',
               '',
-              'I\'ll create an issue with detailed instructions for you now.'
+              `📋 I've created a detailed guide for generating and uploading data in your fork: ${dataGenIssue.data.html_url}`,
+              '',
+              'Please read it carefully with your partner before proceeding.'
             ];
             
             await github.rest.issues.createComment({
@@ -901,51 +936,4 @@ jobs:
               repo: context.repo.repo,
               issue_number: context.issue.number,
               body: completionBodyLines.join('\n')
-            });
-
-      # Create data generation issue immediately after milestone 8
-      - name: Create data generation issue after milestone 8
-        if: steps.parse.outputs.result == '8'
-        uses: actions/github-script@v7
-        env:
-          FORK_REPO: ${{ steps.vars.outputs.fork_repo }}
-        with:
-          github-token: ${{ secrets.GH_PAT_CROSSREPO }}
-          script: |
-            const [owner, repo] = process.env.FORK_REPO.split('/');
-            const preregistrationUrl = context.payload.issue.html_url;
-            
-            const dataGenIssue = await github.rest.issues.create({
-              owner, repo,
-              title: 'Generate and add research data',
-              body: [
-                '## 👥 Partner Task: Generate and add data',
-                '',
-                '### Step 1: Generate Data',
-                `Visit the [🔬 experiment 👀](https://${context.repo.owner}.github.io/${context.repo.repo}/steven) and generate data together (recommended: 20 trials)`,
-                '',
-                '### Step 2: Upload to GitHub',
-                '**Upload to the less experienced partner\'s fork:**',
-                '',
-                '1. Navigate to your fork on GitHub',
-                '2. Create/navigate to `data/` folder (if it doesn\'t exist yet)',
-                '3. Upload your generated data file(s)',
-                '4. Commit the files with a descriptive message',
-                '',
-                '### Step 3: Mark Complete',
-                `Return to: ${preregistrationUrl} and comment \`/done 9\``,
-                '',
-                '---',
-                '',
-                '📋 **Alternative upload methods & help:** [GitHub Upload Cheat Sheet](https://docs.github.com/en/repositories/working-with-files/managing-files/adding-a-file-to-a-repository)',
-                '',
-              ].join('\n')
-            });
-            
-            // Also comment in the main issue with the link
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-              body: `📋 I've created a detailed guide for generating and uploading data in your fork: ${dataGenIssue.data.html_url}\n\nPlease read it carefully with your partner before proceeding.`
             });
