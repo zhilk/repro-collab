@@ -4,4 +4,8 @@
 .Ruserdata
 self-paced/
 publish/
-shiny/
+steven/
+*_cache/
+*_files/
+presentation.html
+xaringan-themer.css

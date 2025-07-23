@@ -1,8 +1,7 @@
 library(shiny)
 library(uuid)
 library(grid)
-library(here)
-
+if(FALSE)library(shinylive)
 # UI -----------------------------------------------------------------------
 ui <- fluidPage(
   tags$head(
@@ -16,13 +15,43 @@ ui <- fluidPage(
       ))
     )
   ),
-  titlePanel(h3("Click on the square that is larger")),
+  titlePanel(h3("Click anywhere on the side of the larger square")),
   fluidRow(
     column(12,
            plotOutput("plot", height = "400px", click = "plot_click"),
-           actionButton("exit", "Exit")
+           actionButton("exit", "Exit & Download", class = "btn-primary")
     )
-  )
+  ),
+  
+  # JavaScript for file download
+  tags$script(HTML("
+    function downloadCSV(csvContent, filename) {
+      // Create a blob with the CSV content
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      
+      // Create a temporary URL for the blob
+      const url = URL.createObjectURL(blob);
+      
+      // Create a temporary anchor element and trigger download
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      link.style.display = 'none';
+      
+      // Add to DOM, click, and remove
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      // Clean up the URL object
+      URL.revokeObjectURL(url);
+    }
+    
+    // Listen for messages from Shiny
+    Shiny.addCustomMessageHandler('downloadFile', function(message) {
+      downloadCSV(message.content, message.filename);
+    });
+  "))
 )
 
 # Server -------------------------------------------------------------------
@@ -142,17 +171,22 @@ server <- function(input, output, session) {
     }
   })
   
-  # Exit: save and stop
+  # Handle exit button - trigger file download via JavaScript
   observeEvent(input$exit, {
-    if(!dir.exists("data"))dir.create("data")
-    write.csv(results(), paste0("data/", session_id, '.csv'), row.names = FALSE)
-    stopApp()
-  })
-  
-  session$onSessionEnded(function() {
-    df <- isolate(results())
-    if(!dir.exists("data")) dir.create("data")
-    write.csv(df, paste0("data/", session_id, '.csv'), row.names = FALSE)
+    # Convert dataframe to CSV string
+    csv_string <- paste(capture.output(write.csv(results(), row.names = FALSE)), collapse = "\n")
+    
+    # Create filename with UUID
+    filename <- paste0(session_id, ".csv")
+    
+    # Send message to JavaScript to trigger download
+    session$sendCustomMessage(
+      type = "downloadFile",
+      message = list(
+        content = csv_string,
+        filename = filename
+      )
+    )
   })
 }
 

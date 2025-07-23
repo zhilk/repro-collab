@@ -23,11 +23,13 @@ If you want to use your fork as the base for hosting additional workshops (where
 You need **two different GitHub PATs** with specific permissions:
 
 ##### 1. Cross-Repository PAT (`GH_PAT_CROSSREPO`)
+
 - **Type**: Classic Personal Access Token
 - **Required Scope**: `public_repo`
 - **Purpose**: Allows the workshop automation to create issues and comments in the main repository when someone forks your repository
 
 ##### 2. Upstream PAT (`GH_PAT_UPSTREAM`)
+
 - **Type**: Fine-grained Personal Access Token
 - **Target**: Your forked repository
 - **Required Permissions**:
@@ -67,9 +69,10 @@ See [LICENSE.md](LICENSE.md) for the full license text.
 We are committed to providing a welcoming and inclusive environment for all participants. Please read our [Code of Conduct](CODE_OF_CONDUCT.md) before contributing.
 
 Key points:
+
 - Be respectful and inclusive
 - Focus on constructive feedback
-- Report issues to peikert@mpib-berlin.mpg.de
+- Report issues to <peikert@mpib-berlin.mpg.de>
 - All community interactions are covered by this code
 
 ## Development Setup
@@ -84,26 +87,24 @@ Key points:
 ### Local Development
 
 1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/your-username/repro-collab.git
-   cd repro-collab
-   ```
+
+```bash
+git clone https://github.com/your-username/repro-collab.git
+cd repro-collab
+```
 
 2. **Restore R dependencies**:
-   ```bash
-   make renv
-   # or directly: Rscript -e "renv::restore()"
-   ```
+
+ ```bash
+ make renv
+ # or directly: Rscript -e "renv::restore()"
+ ```
 
 3. **Build the workshop site**:
-   ```bash
-   make self-paced/
-   ```
 
-4. **Publish (copy to publish directory)**:
-   ```bash
-   make publish/
-   ```
+```bash
+make publish/
+```
 
 ### Docker Development
 
@@ -155,31 +156,12 @@ Uses `rocker/verse:4.5.0` base image with renv for dependency management.
 ### Code Contributions
 
 1. **Fork and create a feature branch**:
-   ```bash
-   git checkout -b feature/your-feature-name
-   ```
+
+```bash
+git checkout -b feature/your-feature-name
+```
 
 2. **Follow existing code style**:
-   - Use existing R coding conventions
-   - Follow bookdown best practices
-   - Keep functions focused and documented
-
-3. **Test your changes**:
-   ```bash
-   make self-paced/  # Build the site
-   ```
-
-4. **Commit with clear messages**:
-   ```bash
-   git commit -m "Add feature: brief description"
-   ```
-
-5. **Create a pull request**:
-   - Reference related issues
-   - Describe changes made
-   - Test that the workshop still works end-to-end
-
-### Documentation
 
 - Update relevant `.Rmd` files for content changes
 - Update `CLAUDE.md` for development workflow changes

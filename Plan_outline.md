@@ -19,7 +19,7 @@ Szene: Your supervisor did something, you review it.
 * I and U live
 * navigate to the repo
 * click on fork
-* show and explain the tracking issue
+* show and explain the tracking issue, explain the milestone list, explain relaod of tracking issue.
 
 ## Milestone III
 

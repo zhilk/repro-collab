@@ -1,0 +1,537 @@
+---
+title: "Reproducible Research in Collaboration"
+subtitle: "Writing Academic Texts on GitHub Together"
+author: 
+  - "Aaron Peikert, Anabel Büchner & Hannes Diemerling"
+date: '`r Sys.Date()`'
+output:
+  xaringan::moon_reader:
+    css: xaringan-themer.css
+    nature:
+      slideNumberFormat: "%current%"
+      highlightStyle: github
+      highlightLines: true
+      ratio: 16:9
+      countIncrementalSlides: true
+repro:
+  packages:
+    - xaringanthemer
+    - svglite
+    - qrcode
+    - showtext
+    - here
+    - rcrossref
+  files:
+    - snippets/signin.Rmd
+    - snippets/signup.Rmd
+  apt:
+    - rsync
+---
+class: middle, center
+
+```{r setup, include=FALSE}
+library(xaringanthemer)
+library(svglite)
+library(qrcode)
+library(showtext)
+library(here)
+library(rcrossref)
+if(FALSE)library(xaringan)
+
+
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(
+  fig.width=9, fig.height=4, fig.retina=3,
+  cache = FALSE,
+  echo = TRUE,
+  message = FALSE, 
+  warning = FALSE,
+  hiline = TRUE,
+  dev = "svglite"
+)
+```
+
+```{r xaringan-themer, include=FALSE, warning=FALSE}
+primary_color <- "#024959"
+secondary_color <- "#F2D605"
+style_duo(
+  primary_color = primary_color,
+  secondary_color = secondary_color,
+  header_font_google = google_font("Didact Gothic", "400", "400i"),
+  text_font_google   = google_font("IBM Plex Sans", "400", "400i"),
+  text_font_size = "1.5rem",
+  )
+
+style_extra_css(css = list(".todo" = list(color = "#17C25B"),
+                           ".optional" = list(color = "#05BCE6"),
+                           ".large" = list(`font-size` = "130%"),
+                           ".small" = list(`font-size` = "80%"),
+                           ".tiny" = list(`font-size` = "50%"),
+                           ".full" = list(padding = "0px",
+                                          margin = "0px",
+                                          border = "0px"),
+                           ".vertical" = list(`writing-mode` = "vertical-rl",
+                                              `text-orientation` = "mixed")),
+                )
+```
+
+## ~~Why collaboration?~~
+
+<https://github.com/signup>
+
+---
+class: center, middle
+
+## Why collaboration?
+
+```{r journal-funs, echo=FALSE, cache=TRUE}
+nauthor <- function(issn, limit = 100){
+  raw <- rcrossref::cr_journals_(issn = issn, works = TRUE, sort = "published", limit = limit, select = "author")
+  vapply(jsonlite::parse_json(raw)$message$items, \(x)length(x$author), 1)
+}
+
+table_author <- function(x){
+  raw <- table(cut(x, breaks = c(1:10, 1000), label = c(1:9, "10+"), right = FALSE))
+  t(as.matrix(raw, col.names = names(t)))
+}
+```
+
+---
+Nr. of authors in the last 100 articles in:
+
+.pull-left[
+
+**Collabra: Psychology**
+
+]
+
+.pull-right[
+
+```{r, echo=FALSE, cache=TRUE, dependson="journal-funs"}
+knitr::kable(table_author(nauthor("2474-7394")), , padding = 2)
+```
+
+]
+
+
+--
+
+
+.pull-left[
+
+**Psychological Science**
+
+]
+
+.pull-right[
+
+
+```{r, echo=FALSE, cache=TRUE, dependson="journal-funs"}
+knitr::kable(table_author(nauthor("1467-9280")), padding = 2)
+```
+
+]
+
+--
+
+.pull-left[
+
+
+**Nature**
+
+]
+
+.pull-right[
+
+```{r, echo=FALSE, cache=TRUE, dependson="journal-funs"}
+knitr::kable(table_author(nauthor("1476-4687")), padding = 2)
+```
+
+]
+
+---
+class: center, middle
+
+## Who could do their research alone?
+
+
+---
+class: center, middle
+
+
+## Who could do their research without a computer?
+
+---
+class: center, middle
+
+# Collaboration is hard
+
+---
+
+# Moving Parts
+
+* code
+* data
+* software
+* results
+* text
+
+---
+# Collaborators
+
+* you
+--
+
+* your future self
+
+--
+
+* collaborators
+    * with less expertise
+    * with more expertise, but less time
+
+--
+
+* editors
+* reviewers
+* readers
+
+---
+# Contributions
+
+* high level feedback
+* to the text (small)
+* to the text (extensive)
+* to the code
+* to the results
+* to the data
+
+---
+# Channels
+
+* mail
+* verbally
+* comments in a document
+* changes in a document
+* changes on a printout
+* via a submission portal
+* whats app
+* ...
+
+---
+class: center, middle
+
+> All happy families are alike; each unhappy family is unhappy in its own way.
+
+.right[Leo Tolstoy from Anna Karenina]
+
+---
+class: middle
+
+Happy collaborations:
+
+* don't fight with technology, they take advantage of it
+* don't engage in edit wars, they have clear responsibilities
+
+--
+
+This is as much as a **technological** challange, as a **sociological** one.
+
+
+---
+
+Speaking of technology, why can't we use good old:
+
+* Word
+* Google Docs / Overleaf
+* Google Collab
+* Dropbox / Seafile etc.
+
+---
+
+# Word
+
+.pull-left[
+
+## Upside
+
+* everyone can use it
+* track changes
+
+]
+
+.pull-right[
+
+## Downside
+
+* only one person at any given time
+* no reproducibility
+
+]
+
+---
+
+# Google Doc / Overleaf
+
+.pull-left[
+
+## Upside
+
+* everyone can use it
+* many people
+* ~~track changes~~
+
+]
+
+.pull-right[
+
+## Downside
+
+* anyone can edit everything, without anyone noticing
+* no reproducibility
+
+]
+
+---
+
+# Google Collab
+
+.pull-left[
+
+## Upside
+
+* many people can edit
+* track changes via GitHub
+* reproducibility
+
+]
+
+.pull-right[
+
+## Downside
+
+* track changes via GitHub
+
+]
+
+---
+
+# Dropbox & Co
+
+.pull-left[
+
+## Upside
+
+* anyone can use it
+* reproducibility
+
+]
+
+.pull-right[
+
+## Downside
+
+* only one person at any given time
+* anyone can edit everything, without anyone noticing
+
+]
+
+---
+
+# GitHub / GitLab
+
+.pull-left[
+
+## Upside
+
+* reproducibility
+* high level of control
+* thousands of people can collaborate
+* any collaboration workflow is possible
+
+]
+
+.pull-right[
+
+## Downside
+
+* any collaboration workflow is possible
+* highly complex
+
+]
+
+
+---
+class: center, middle
+
+# Collaboration is hard
+
+--
+
+# Github is hard
+
+--
+
+# Alternatives are hard
+
+---
+class: center, middle
+
+# Learning Goals
+
+---
+name: github
+
+## Technological/GitHub
+
+.pull-left[
+
+1. repositories
+2. forks
+3. issues
+4. pull requests
+
+]
+
+---
+
+## Socialogical
+
+1. everything in one place
+2. the issue of trust
+3. project and task management
+4. distributing work
+
+---
+template: github
+
+.pull-right[
+
+1. [aaronpeikert/repro-workshop](https://github.com/aaronpeikert/repro-workshop/)
+2. in a second
+3. 10min on your own
+4. 90-150min in a team
+
+]
+
+---
+
+# Reproducibility
+
+[Research as a software product](https://github.com/aaronpeikert/repro-collab/blob/1e42e2dfc205bb491a31602e6271f9c8e46c325a/presentation.Rmd#L87-L98).
+
+
+---
+
+## Get Active
+
+.left[
+
+1. aaronpeikert.github.io/repro-collab/self-paced
+
+]
+
+```{r, echo=FALSE}
+link <- "aaronpeikert.github.io/repro-collab/self-paced"
+```
+
+```{r, echo=FALSE, out.width = "30%", out.extra='style="float:center"'}
+generate_svg(qr_code(link), here::here("assets/", "qr_slides.svg"), foreground = secondary_color, background = primary_color, show = FALSE)
+knitr::include_graphics("assets/qr_slides.svg")
+```
+
+---
+
+# This workshop is a beta version
+
+Provide feedback: https://github.com/aaronpeikert/repro-collab/issues/new
+
+---
+
+---
+
+## What makes an ideal issue?
+
+--
+
+The next step is clear.
+
+1. Discussion
+2. Decission
+2. Implementation
+
+---
+
+## How can issues be used to organize tasks and responsibilities?
+
+--
+
+* people can voice their opinion in way that is documented
+* mentioning via @username to trigger discussion/decision
+* people can assign themselves or others
+
+---
+
+## How to get/provide feedback via GitHub?
+
+--
+
+* pull requests are ideally suited to get/provide feedback
+* can be integrated into issues
+* tracking other peoples contribution via PR is possible
+
+---
+
+## What aspects of your workflow are difficult to translate to GitHub?
+
+---
+
+## How much skill is required?
+
+--
+
+Either:
+
+.pull-left[
+
+**Git Wizard**
+
+
+]
+
+.pull-right[
+
+**Project Organization Wizard**
+
+]
+
+--
+
+Or some of both.
+
+---
+
+.pull-left[
+    
+# Stay Sane
+
+]
+
+.pull-right[
+
+![A comic making fun of git.](https://imgs.xkcd.com/comics/git.png)
+
+]
+
+.footnote[Comic: [xkcd.com/1597](https://xkcd.com/1597/) "Git" by Randall Munroe, licensed under [CC BY-NC 2.5](https://creativecommons.org/licenses/by-nc/2.5/)]
+
+---
+
+# Making a diff(erence)
+
+
+* coordinate
+* make atomic changes
+* commit often, push less often
+* use markdown everywhere
+* when using markdown place each sentence on its own line
