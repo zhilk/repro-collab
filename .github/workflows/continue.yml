@@ -261,15 +261,22 @@ jobs:
             // 7) Notify the "Create your own first issue" in the fork
             const preregistrationUrl = context.payload.issue.html_url;
             if (firstIssue) {
+              const milestone4NotificationBodyLines = [
+                `@${context.actor}, you've completed milestone 4!`,
+                '',
+                'Imagine your collaborators saw your reminder and quickly put together a first draft of the preregistration (how efficient!).',
+                'In the next part of the workshop, you will help refine this preregistration.',
+                'But first, **close this issue** you since you completed the task. Closing issues when they are are no longer needed is good practice for keeping your repository organized.',
+                '',
+                '**Task:** Close this issue.',
+                '',
+                `**Afterwards:** When you closed the issue, comment \`/done 5\` here: ${preregistrationUrl}!`
+              ];
+              
               await github.rest.issues.createComment({
                 owner, repo,
                 issue_number: firstIssue.number,
-                body: `@${context.actor}, you\’ve completed milestone 4!  
-                Imagine your collaborators saw your reminder and quickly put together a first draft of the preregistration (how efficient!).
-                In the next part of the workshop, you will help refine this preregistration.  
-                But first, **close this issue** you since you completed the task. Closing issues when they are are no longer needed is good practice for keeping your repository organized.
-                **Task:** Close this issue.
-                **Afterwards:** When you closed the issue, comment \`/done 5\` here: ${preregistrationUrl}!`
+                body: milestone4NotificationBodyLines.join('\n')
               });
             }
     # 5.1) Verify "Create your own first issue" is closed in the fork
@@ -387,6 +394,40 @@ jobs:
             const forkOwner = '${{ steps.verify-5.outputs.fork_owner }}';
             const forkRepo = '${{ steps.verify-5.outputs.fork_repo }}';
 
+            // Find the user's created issue with Levenshtein logic
+            const target = 'preregistration needed';
+
+            // 1) Grab the last 10 issues (all states)
+            const { data: recent } = await github.rest.issues.listForRepo({
+              owner: forkOwner,
+              repo: forkRepo,
+              state: 'all',
+              per_page: 10,
+              sort: 'created',
+              direction: 'desc'
+            });
+
+            // 2) Try exact match
+            let preregIssue = recent.find(i => i.title.toLowerCase() === target);
+
+            // 3) If no exact, run Levenshtein ≤3
+            if (!preregIssue) {
+              const lev = (a, b) => {
+                const dp = Array.from({ length: a.length + 1 }, () => []);
+                for (let i = 0; i <= a.length; i++) dp[i][0] = i;
+                for (let j = 0; j <= b.length; j++) dp[0][j] = j;
+                for (let i = 1; i <= a.length; i++) {
+                  for (let j = 1; j <= b.length; j++) {
+                    dp[i][j] = a[i-1] === b[j-1]
+                      ? dp[i-1][j-1]
+                      : 1 + Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]);
+                  }
+                }
+                return dp[a.length][b.length];
+              };
+              preregIssue = recent.find(i => lev(i.title.toLowerCase(), target) <= 3);
+            }
+
             // Get fork's default branch
             const { data: forkData } = await github.rest.repos.get({
               owner: forkOwner,
@@ -410,8 +451,8 @@ jobs:
               'When the changes are deemed good, they can be added to the official version.', 
               'This step is called **merging**: it combines the separate branch with the main branch so that both contain the same version of the project.',
               '', 
-              'You\’re now inside such a pull request, which means that your collaborators are waiting for your feedback on their preregistration draft.', 
-              'In pull requests, you can discuss changes using comments and directly suggest edits to the document. For now, we\'ll practice how to suggest a change in a file within a pull request.', 
+              'You\’re now inside such a pull request: Your collaborators are waiting for your feedback on their preregistration draft.',
+              `This PR closes #${preregIssue.number} (${preregIssue.title}).`,
               '', 
               '**Task:** Suggest a change to the preregistration file',
               '- Go to the **Files changed** tab of this PR.',
@@ -657,10 +698,12 @@ jobs:
       - name: Verify milestone 8
         if: steps.parse.outputs.result == '8'
         uses: actions/github-script@v7
+        env:
+          FORK_REPO: ${{ steps.vars.outputs.fork_repo }}
         with:
           github-token: ${{ secrets.GH_PAT_CROSSREPO }}
           script: |
-            // Cross off “8.”, reveal “9.”
+            // Cross off "8.", reveal "9."
             const updatedBody8 = context.payload.issue.body
               .replace(/^(\s*-\s*\[)\s\](\s*8\..*)$/m, '$1x]$2')
               + '\n- [ ] 9. Generate and Upload Steven Data.';
@@ -673,7 +716,38 @@ jobs:
               state: 'open'
             });
             
-            // Success comment
+            // Create data generation issue in the fork
+            const [owner, repo] = process.env.FORK_REPO.split('/');
+            const preregistrationUrl = context.payload.issue.html_url;
+            
+            const dataGenIssue = await github.rest.issues.create({
+              owner, repo,
+              title: 'Generate and add research data',
+              body: [
+                '## 👥 Partner Task: Generate and add data',
+                '',
+                '### Step 1: Generate Data',
+                `Visit the [🔬 experiment 👀](https://${context.repo.owner}.github.io/${context.repo.repo}/steven) and generate data together (recommended: 20 trials)`,
+                '',
+                '### Step 2: Upload to GitHub',
+                '**Upload to the less experienced partner\'s fork:**',
+                '',
+                '1. Navigate to your fork on GitHub',
+                '2. Create/navigate to `data/` folder (if it doesn\'t exist yet)',
+                '3. Upload your generated data file(s)',
+                '4. Commit the files with a descriptive message',
+                '',
+                '### Step 3: Mark Complete',
+                `Return to: ${preregistrationUrl} and comment \`/done 9\``,
+                '',
+                '---',
+                '',
+                '📋 **Alternative upload methods & help:** [GitHub Upload Cheat Sheet](https://docs.github.com/en/repositories/working-with-files/managing-files/adding-a-file-to-a-repository)',
+                '',
+              ].join('\n')
+            });
+            
+            // Success comment with link to the data generation issue
             const milestone8BodyLines = [
               '🎉 Great that you found your partner!',
               '',
@@ -686,7 +760,9 @@ jobs:
               '',
               '**Important:** Only the less experienced GitHub user should run `/done 9` after completing all tasks.',
               '',
-              'I\'ll create an issue with detailed instructions for you now.'
+              `📋 I've created a detailed guide for generating and uploading data in your fork: ${dataGenIssue.data.html_url}`,
+              '',
+              'Please read it carefully with your partner before proceeding.'
             ];
             
             await github.rest.issues.createComment({
@@ -754,7 +830,21 @@ jobs:
                 );
               }
             } catch (error) {
-              // Data folder doesn't exist
+              try {
+                const { data: contents } = await github.rest.repos.getContent({
+                  owner, repo,
+                  path: 'Data'
+                });
+                
+                if (Array.isArray(contents)) {
+                  dataFiles = contents.filter(item => 
+                    item.type === 'file' && 
+                    (item.name.endsWith('.csv') || item.name.endsWith('.txt') || item.name.endsWith('.json'))
+                  );
+                }
+              } catch (error2) {
+                // Data folder doesn't exist
+              }
             }
             
             if (dataFiles.length < 2) {
@@ -906,62 +996,4 @@ jobs:
               repo: context.repo.repo,
               issue_number: context.issue.number,
               body: completionBodyLines.join('\n')
-            });
-
-      # Create data generation issue immediately after milestone 8
-      - name: Create data generation issue after milestone 8
-        if: steps.parse.outputs.result == '8'
-        uses: actions/github-script@v7
-        env:
-          FORK_REPO: ${{ steps.vars.outputs.fork_repo }}
-        with:
-          github-token: ${{ secrets.GH_PAT_CROSSREPO }}
-          script: |
-            const [owner, repo] = process.env.FORK_REPO.split('/');
-            const preregistrationUrl = context.payload.issue.html_url;
-            
-            const dataGenIssue = await github.rest.issues.create({
-              owner, repo,
-              title: 'Generate and add research data',
-              body: [
-                '## 👥 Partner Task: Generate and add data',
-                '',
-                '### Step 1: Generate Data',
-                `Visit the [🔬 experiment 👀](https://${context.repo.owner}.github.io/${context.repo.repo}/steven) and each generate your own data (recommended: 20 trials)`,
-                '',
-                '### Step 2: Upload to GitHub',
-                'Next, both of you should upload your generated data to the less experienced partner\'s fork.', 
-                '', 
-                'You have two options on how to do this:', 
-                '* **Option (a)**: The less experienced partner adds the more experienced partner as a **collaborator** to their fork.', 
-                '* **Option (b)**: The more experienced partner uploads their data file in their own fork and then requests to add it to their partner\'s fork via a **pull request**.', 
-                '', 
-                'Whether you choose option (a) or (b) depends on trust in collaborative projects:', 
-                '* If you add someone as a collaborator, you give them permission to make changes directly to your project, even without your explicit agreement.', 
-                '* If you work via forks and pull requests, you retain full control, meaning your collaborators cannot make any changes without your review and approval.', 
-                '', 
-                'When uploading your data folder, note that GitHub itself doesn\'t let you create an empty folder. However, if your folder contains files, you can upload it directly using drag & drop:', 
-                '* Create a folder named **data** on your local computer.', 
-                '* Place your generated data file inside this folder.', 
-                '* Navigate to your fork on GitHub.', 
-                '* Click the **Upload files** button (accessible via the **"+"** button next to the **Code** button).', 
-                '* Drag your **data folder** (with files inside) into the upload area.', 
-                '* Commit the folder with a descriptive message.',
-                '', 
-                '### Step 3: Mark Complete',
-                `**Afterwards**: Return to: ${preregistrationUrl} and comment \`/done 9\``,
-                '',
-                '---',
-                '',
-                '📋 **Alternative upload methods & help:** [GitHub Upload Cheat Sheet](https://docs.github.com/en/repositories/working-with-files/managing-files/adding-a-file-to-a-repository)',
-                '',
-              ].join('\n')
-            });
-            
-            // Also comment in the main issue with the link
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-              body: `📋 I've created a detailed guide for generating and uploading data in your fork: ${dataGenIssue.data.html_url}\n\nPlease read it carefully with your partner before proceeding.`
             });
