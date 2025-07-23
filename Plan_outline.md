@@ -8,7 +8,7 @@ Szene: Your supervisor did something, you review it.
 
 ## Intro
 
-* why collaborate on github
+* why collaborate on github [aaronpeikert.github.io/presentation](https://aaronpeikert.github.io/repro-collab/presentation)
 * ask U to create or login to GitHub (milestone I)
 * Explain the learning goals
 * Explain the background
@@ -20,6 +20,8 @@ Szene: Your supervisor did something, you review it.
 * navigate to the repo
 * click on fork
 * show and explain the tracking issue, explain the milestone list, explain relaod of tracking issue.
+* activate issues in fork
+* show /done 3 
 
 ## Milestone III
 
