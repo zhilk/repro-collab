@@ -5,6 +5,7 @@ We *failed*.
 So we took an experiment that was easy to implement on an computer from:
 
 > Reese, T. W., Reese, E. P., Volkmann, J., & Corbin, H. H. (Eds.). (1953). Psychophysical research: summary report, 1946-1952 (Vol. 131, No. 1-5). Office of Naval Research.
+
 > This report is a compilation of more than seventy experiments in the area of visual discrimination.
 > Such topics as estimating bearing, estimating the number of targets, coding of controls, etc. are covered.
 > In compiling the data it became evident that some of the results have immediate specific military application, some have general application, and others provide basic research information.
