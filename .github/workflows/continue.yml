@@ -461,7 +461,7 @@ jobs:
               '', 
               `**Afterwards**: Once you\'ve suggested your change, return to ${context.payload.issue.html_url} and comment \`/done 6\` to continue`,
               '',
-              '<img src="https://raw.githubusercontent.com/HannesDiemerling/repro-collab/main/gifs/make_suggestion.gif" alt="Make Suggestion GIF">'
+              '<img src="https://${context.repo.owner}.github.io/${context.repo.repo}/assets/make_suggestion.gif" alt="Make Suggestion GIF">'
             ];
 
             // Create PR from upstream branch to fork
@@ -737,6 +737,8 @@ jobs:
                 '3. Upload your generated data file(s)',
                 '4. Commit the files with a descriptive message',
                 '',
+                `<img src="https://${context.repo.owner}.github.io/${context.repo.repo}/assets/data_PR.gif" alt="Make Issues GIF">`,
+                '',
                 '### Step 3: Mark Complete',
                 `Return to: ${preregistrationUrl} and comment \`/done 9\``,
                 '',
@@ -950,6 +952,8 @@ jobs:
               '* type `.` (literal dot on your keyboard) while you in the code or PR view',
               '* replace `github.com` with `github.dev` in the URL',
               `* https://github.dev/${owner}/${repo}/`,
+              '',
+              `<img src="https://${context.repo.owner}.github.io/${context.repo.repo}/assets/web_VS.gif" alt="VS_Web">`,
               '',
               '👥 **How to collaborate**', 
               'You already explored different collaboration setups in milestone 9. For this task:', 
