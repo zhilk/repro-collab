@@ -862,7 +862,7 @@ jobs:
               '💡 **Tips for smooth collaboration**', 
               '* Write **clear commit messages** so your partner knows what changed (e.g., "Refined research question wording").', 
               '* Keep your branch or fork up-to-date with the main branch before opening a PR.', 
-              '  - [How to sync your fork](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/syncing-a-fork?utm_source=chatgpt.com)', 
+              '  - [How to sync your fork](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/syncing-a-fork)', 
               '  - [How to sync your branch](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/keeping-your-pull-request-in-sync-with-the-base-branch)', 
               '* **Smaller PRs** (e.g., with fewer commits) are easier to review, discuss and merge.', 
               '* **Mention your partner** in the PR (@username) or by assigning them as a reviewer.', 
