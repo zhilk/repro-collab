@@ -539,3 +539,4 @@ Or some of both.
 * commit often, push less often
 * use markdown everywhere
 * when using markdown place each sentence on its own line
+
