@@ -461,7 +461,7 @@ jobs:
               '', 
               `**Afterwards**: Once you\'ve suggested your change, return to ${context.payload.issue.html_url} and comment \`/done 6\` to continue`,
               '',
-              '<img src="https://${context.repo.owner}.github.io/${context.repo.repo}/assets/make_suggestion.gif" alt="Make Suggestion GIF">'
+              '<img src="https://raw.githubusercontent.com/aaronpeikert/repro-collab/main/assets/make_suggestion.gif" alt="Make Suggestion GIF">'
             ];
 
             // Create PR from upstream branch to fork
